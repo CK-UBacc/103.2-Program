@@ -168,6 +168,6 @@ int main()
 	Inventory test;
 	test.inventoryName = "test inventory";
 
-	//test.menu();
-	test.SaveInventory();
+	test.menu();
+	//test.SaveInventory();
 }
