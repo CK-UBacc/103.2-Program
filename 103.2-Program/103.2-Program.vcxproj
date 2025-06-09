@@ -129,6 +129,9 @@
   <ItemGroup>
     <ClCompile Include="103.2-Program.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="test inventoryLog.txt" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

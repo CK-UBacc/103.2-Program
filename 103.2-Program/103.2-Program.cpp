@@ -8,12 +8,16 @@
 #include <iomanip>//Used for output formating such as setw();
 #include <string>
 #include <vector>
+#include <fstream>
+#include <ctime>
 
 using namespace std;
 
 class Inventory {
 public:
-	string logprint;
+	string 
+		inventoryName = "UNINITIALIZED",
+		logMessage;
 
 	struct Item{
 		string
@@ -32,11 +36,13 @@ public:
 	//Function that displays currently loaded inventory
 	void displayInventory() {
 		/*TO-DO!
-		* -Output formating
+		* -figure out how to display money
 		*/
-		cout << "     " << setw(20) << left << "Product"
-			<< setw(10) << left << "Price"
-			<< setw(5) << left << "Quantity\n";
+		cout 
+			<< setw(8) << left << "Quantity"
+			<< setw(22) << left << " |Product"
+			<< left << "|Price"
+			<< "\n";
 		for (Item i : list) {
 			if (i.quantity < 5) {
 				cout << " [!] ";
@@ -44,15 +50,44 @@ public:
 			else {
 				cout << "     ";
 			}
-			cout << setfill('.') << setw(20) << left << i.name
-				<< "$" << setw(10) << left << i.price
-				<< i.quantity << "\n";
+			cout << setfill(' ') << setw(3) << right << i.quantity;
+			cout << " |";
+			cout << setfill ('.') << setw(20) << left << i.name;
+			cout << "|";
+			cout << setfill(' ') << "$" << left << i.price;
+			
+			cout << endl;
 		}
 	}
 
 	//Outputs log message to log file
-	void logChange() {
-		cout << logprint;
+	void log(string logMessage) {
+		ofstream LogFile(inventoryName + "_Log.txt", ios::app);
+
+		LogFile << logMessage << endl;
+
+		LogFile.close();
+	}
+
+	// Saves the inventory to a file to later be loaded
+	/*
+	-Add Log functionality
+	*/
+	void SaveInventory() {
+		ofstream InventoryFile(inventoryName + "_Inventory.csv");
+
+		// Error prevention
+		if (!InventoryFile) {
+			cout << "Error opening file.\n";
+			return;
+		}
+
+		// Adds and formats each item
+		for (const Item item : list) {
+			InventoryFile << item.name << "," << item.quantity << "," << item.price << "\n";
+		}
+		InventoryFile.close();
+		cout << "Inventory has been saved to Inventory.csv\n";
 	}
 
 	//Creates a new inventory listing
@@ -70,28 +105,69 @@ public:
 			newQuantity,
 			newPrice;
 
+		//Taking inputs for new inventory item
 		cout << "Input new item name\n";
-		cin.ignore();//First letter gets cut of on first input but not on subsequent inputs
+		cin.ignore();
 		getline(cin, newName);
-
 		cout << "Input Quantity of items\n";
 		cin >> newQuantity;
 		cout << "Input new item price\n$";
 		cin >> newPrice;
 		list.push_back({newName, newQuantity, newPrice});
 		cout << "\n\n";
-		logprint = "\n" + to_string(newQuantity) + " " + newName + "(s) have been added to the list for $" + to_string(newPrice) + ".\n";
-		logChange();
-	}
-};//Class inventory end
 
+		//Logging change in file
+		logMessage ="Added: " + to_string(newQuantity) + " \"" + newName + "\" with price set to $" + to_string(newPrice);
+		log(logMessage);
+	}
+
+	void editItem() {
+		cout << "editItem\n";
+	}
+
+	void removeItem() {
+		cout << "removeItem\n";
+	}
+
+	void menu() {
+		int menuOption;
+
+		//Display inventory and menu options
+		cout << "Editing inventory: " << inventoryName << "\n\n";
+		displayInventory();
+		cout << " 1:New item | 2:Edit item | 3:Remove item | 0:Exit\n";
+
+		//Menu Inputs
+		do {
+			cin >> menuOption;
+			switch (menuOption) {
+			case 0:// Exit menu
+				break;
+			case 1:// Add inventory item
+				addItem();
+				system("cls");
+				return menu();
+			case 2:// Edit inventory item
+				editItem();
+				//system("cls");
+				return menu();
+			case 3:// Remove inventory item
+				removeItem();
+				//system("cls");
+				return menu();
+			default:
+				cout << "Invalid input\n";
+			}
+		} while (menuOption != 0);
+	}
+
+};//Class Inventory end
 
 int main()
 {
 	Inventory test;
+	test.inventoryName = "test inventory";
 
-	test.displayInventory();
-	test.addItem();
-	test.addItem();
-	test.displayInventory();
+	//test.menu();
+	test.SaveInventory();
 }
