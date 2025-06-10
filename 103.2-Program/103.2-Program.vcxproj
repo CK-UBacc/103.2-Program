@@ -130,7 +130,7 @@
     <ClCompile Include="103.2-Program.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="test inventoryLog.txt" />
+    <None Include="test inventory_Inventory.csv" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

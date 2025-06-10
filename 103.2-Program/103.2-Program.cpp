@@ -116,13 +116,72 @@ public:
 		list.push_back({newName, newQuantity, newPrice});
 		cout << "\n\n";
 
-		//Logging change in file
+		//Logging the change to the file
 		logMessage ="Added: " + to_string(newQuantity) + " \"" + newName + "\" with price set to $" + to_string(newPrice);
 		log(logMessage);
 	}
 
+	Item& findItem(string itemDesired) {
+		//Go through the entire inventory list and compare their name with the name of the desired item
+		for (Item& item : list) {
+			if (item.name == itemDesired) {
+				return item;
+			}
+		}
+	}
+
 	void editItem() {
-		cout << "editItem\n";
+		string desiredItem;
+		Item &selectedItem = list[0];
+		int menuOption;
+
+		/*
+		cout << "\nenter the name of the item to edit: ";
+		cin.ignore();
+		getline(cin, desiredItem);
+		selectedItem = findItem(desiredItem);
+		*/
+		cout << " 1:Edit Name | 2:Edit Quantity | 3:Edit Price | 0:Exit\n";
+
+		//Menu Inputs
+		do {
+			cin >> menuOption;
+			switch (menuOption) {
+			case 0:// Exit menu
+				break;
+			case 1:
+				selectedItem.name = "Jimmy Johson";
+				cout << endl << selectedItem.name << endl << selectedItem.name;
+				break;
+			case 2:
+				break;
+			case 3:
+				break;
+			default:
+				cout << "Invalid input\n";
+			}
+		} while (menuOption != 0);
+		/*
+		* string newName;
+		int newQuantity;// &newPrice;
+		string input;
+		cout << "Editing \"" << selectedItem.name << "\"\n";
+		cout << "Enter new name (leave empty to keep \"" << selectedItem.name << "\"): ";
+		getline(cin, newName);
+		if (!newName.empty()) {
+			selectedItem.name = newName;
+		}
+		cout << "Enter new quantity (current: " << selectedItem.quantity << "): ";
+		cin >> input;
+		try {
+			newQuantity = stoi(input);
+			if (newQuantity >= 0) selectedItem.quantity = newQuantity;
+			else cout << "Quantity must be non-negative. Keeping original value.\n";
+		}
+		catch (...) {
+			cout << "Invalid input. Keeping original quantity.\n";
+		}
+		*/
 	}
 
 	void removeItem() {
@@ -149,7 +208,7 @@ public:
 				return menu();
 			case 2:// Edit inventory item
 				editItem();
-				//system("cls");
+				system("cls");
 				return menu();
 			case 3:// Remove inventory item
 				removeItem();
@@ -161,6 +220,7 @@ public:
 		} while (menuOption != 0);
 	}
 
+
 };//Class Inventory end
 
 int main()
@@ -170,4 +230,5 @@ int main()
 
 	test.menu();
 	//test.SaveInventory();
+	//test.editItem();
 }
