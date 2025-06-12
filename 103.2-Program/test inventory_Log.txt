@@ -1,1 +1,1 @@
-Added: 15 "Item 4" with price set to $1300
+Added 35 of "Item 4" with price $300

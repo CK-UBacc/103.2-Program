@@ -132,6 +132,9 @@
   <ItemGroup>
     <None Include="test inventory_Inventory.csv" />
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="test inventory_Log.txt" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

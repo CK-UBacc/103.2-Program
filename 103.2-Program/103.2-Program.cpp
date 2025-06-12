@@ -16,8 +16,7 @@ using namespace std;
 class Inventory {
 public:
 	string 
-		inventoryName = "UNINITIALIZED",
-		logMessage;
+		inventoryName = "UNINITIALIZED";
 
 	struct Item{
 		string
@@ -100,6 +99,7 @@ public:
 		* -check for valid price (e.g. cant input $5.999)
 		*/
 		string
+			//logMessage,
 			newName;
 		int 
 			newQuantity,
@@ -117,10 +117,25 @@ public:
 		cout << "\n\n";
 
 		//Logging the change to the file
-		logMessage ="Added: " + to_string(newQuantity) + " \"" + newName + "\" with price set to $" + to_string(newPrice);
-		log(logMessage);
+		log("Added " + to_string(newQuantity) + " of \"" + newName + "\" with price $" + to_string(newPrice));//Removed the log message variable bc it's not needed
 	}
 
+	//Gets the index of an item in the list that matches the provided string
+	//Need to add case indifference
+	int findItemIndex(string itemDesired) {
+		int index = 0;
+		//Go through the entire inventory list and compare their name with the name of the desired item
+		for (Item item : list) {
+			if (item.name == itemDesired) {
+				return index;
+			}
+			index++;
+		}
+		return 0;
+	}
+
+	//Gets a reference of an item in the list that matches the provided string
+	//Need to add case indifference
 	Item& findItem(string itemDesired) {
 		//Go through the entire inventory list and compare their name with the name of the desired item
 		for (Item& item : list) {
@@ -128,30 +143,41 @@ public:
 				return item;
 			}
 		}
+		return list[0];//So if no item is found the entire program doesn't shit the bed and die
+	}
+
+	//Testing stuff
+	void itemFuckery() {
+		Item* ptr = &list[0];
+		string itemDesired = "Jam";
+
+		displayInventory();
+		cout << (*ptr).name << endl;
+
+		ptr = &list[findItemIndex(itemDesired)];//I hate this but it works
+		cout << (*ptr).name << endl;
+		(*ptr).name = "Jimmy Johnson";
+		displayInventory();
+
+		findItem(itemDesired).name = "George";
+		displayInventory();
 	}
 
 	void editItem() {
 		string desiredItem;
-		Item &selectedItem = list[0];
+		Item* selectedItem = &list[0];
 		int menuOption;
 
-		/*
-		cout << "\nenter the name of the item to edit: ";
-		cin.ignore();
-		getline(cin, desiredItem);
-		selectedItem = findItem(desiredItem);
-		*/
-		cout << " 1:Edit Name | 2:Edit Quantity | 3:Edit Price | 0:Exit\n";
-
 		//Menu Inputs
+		cout << " 1:Edit Name | 2:Edit Quantity | 3:Edit Price | 0:Exit\n";
 		do {
 			cin >> menuOption;
 			switch (menuOption) {
 			case 0:// Exit menu
 				break;
 			case 1:
-				selectedItem.name = "Jimmy Johson";
-				cout << endl << selectedItem.name << endl << selectedItem.name;
+				(*selectedItem).name = "Jimmy Johson";
+				cout << endl << (*selectedItem).name << endl << (*selectedItem).name;
 				break;
 			case 2:
 				break;
@@ -161,31 +187,24 @@ public:
 				cout << "Invalid input\n";
 			}
 		} while (menuOption != 0);
-		/*
-		* string newName;
-		int newQuantity;// &newPrice;
-		string input;
-		cout << "Editing \"" << selectedItem.name << "\"\n";
-		cout << "Enter new name (leave empty to keep \"" << selectedItem.name << "\"): ";
-		getline(cin, newName);
-		if (!newName.empty()) {
-			selectedItem.name = newName;
-		}
-		cout << "Enter new quantity (current: " << selectedItem.quantity << "): ";
-		cin >> input;
-		try {
-			newQuantity = stoi(input);
-			if (newQuantity >= 0) selectedItem.quantity = newQuantity;
-			else cout << "Quantity must be non-negative. Keeping original value.\n";
-		}
-		catch (...) {
-			cout << "Invalid input. Keeping original quantity.\n";
-		}
-		*/
 	}
 
 	void removeItem() {
-		cout << "removeItem\n";
+		string input;
+
+		cout << "Chose an item to remove\n";
+		cin.ignore();
+		getline(cin, input);
+
+	}
+
+	//check to see if the list is empty
+	bool emptyCheck() {
+		if (list.empty()) {
+			cout << "ERROR. Cannot perform action. Inventory is empty.\n";
+			return true;
+		}
+		return false;
 	}
 
 	void menu() {
@@ -207,13 +226,19 @@ public:
 				system("cls");
 				return menu();
 			case 2:// Edit inventory item
-				editItem();
-				system("cls");
-				return menu();
+				if (!emptyCheck()) {
+					editItem();
+					system("cls");
+					return menu();
+				}
+				break;
 			case 3:// Remove inventory item
-				removeItem();
-				//system("cls");
-				return menu();
+				if (!emptyCheck()) {
+					removeItem();
+					//system("cls");
+					return menu();
+				}
+				break;
 			default:
 				cout << "Invalid input\n";
 			}
@@ -223,12 +248,17 @@ public:
 
 };//Class Inventory end
 
+//testing stuff
+void timestamp() {
+
+}
+
 int main()
 {
 	Inventory test;
 	test.inventoryName = "test inventory";
 
-	test.menu();
-	//test.SaveInventory();
-	//test.editItem();
+	//timestamp();
+	//test.menu();
+	test.itemFuckery();
 }
