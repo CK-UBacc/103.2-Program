@@ -1,1 +1,6 @@
 Added 35 of "Item 4" with price $300
+Added 15 of "Item 4" with price $300
+Added 15 of "Item 4" with price $200
+Added 3 of "Item 5" with price $1000
+Added 3 of "ITEM 4" with price $1500
+Added 2 of "ITEM 4" with price $1000

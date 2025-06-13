@@ -10,6 +10,7 @@
 #include <vector>
 #include <fstream>
 #include <ctime>
+#include <algorithm>
 
 using namespace std;
 
@@ -26,11 +27,7 @@ public:
 			price;
 	};
 
-	vector<Item> list = {
-		{"Peanuts", 3, 1520},//Temporary 
-		{"Jam", 15, 299},
-		{"Marmite", 5, 999}
-	};
+	vector<Item> list;
 
 	//Function that displays currently loaded inventory
 	void displayInventory() {
@@ -89,6 +86,29 @@ public:
 		cout << "Inventory has been saved to Inventory.csv\n";
 	}
 
+	void loadInventory() {
+		ifstream InventoryFile(inventoryName + "_Inventory.csv");
+		if (!InventoryFile) {
+			cout << "Inventory file cannot be found.\n";
+			return;
+		}
+
+		list.clear(); // clears the current inventory
+
+		string name;
+		int quantity, price;
+		char comma;
+
+		while (InventoryFile >> ws && getline(InventoryFile, name, ',')) {
+			InventoryFile >> quantity >> comma >> price;
+			list.push_back({ name, quantity, price });
+			InventoryFile.ignore(); // skips the newline
+		}
+
+		InventoryFile.close();
+		cout << "Inventory has been loaded from file\n";
+	}
+
 	//Creates a new inventory listing
 	void addItem(){
 		/*TO-DO!
@@ -105,6 +125,7 @@ public:
 			newQuantity,
 			newPrice;
 
+		/*
 		//Taking inputs for new inventory item
 		cout << "Input new item name\n";
 		cin.ignore();
@@ -115,11 +136,46 @@ public:
 		cin >> newPrice;
 		list.push_back({newName, newQuantity, newPrice});
 		cout << "\n\n";
+		*/
+
+		cout << "Input new item name:\n";
+		cin.ignore();
+		getline(cin, newName);
+		transform(newName.begin(), newName.end(), newName.begin(), ::toupper);
+
+		// Check if item already exists
+		for (Item item : list) {
+			if (item.name == newName) {
+				cout << "Item already exists.\n";
+				return;
+			}
+		}
+
+		cout << "Input quantity:\n";
+		do {
+			cin >> newQuantity;
+			if (newQuantity < 0) {
+				cout << "Quantity has to be positive.\n";
+				//return;
+			}
+		} while (newQuantity < 0);
+
+		cout << "Input price:\n$";
+		do {
+			cin >> newPrice;
+			if (newPrice < 0) {
+				cout << "Price has to be positive.\n";
+				//return;
+			}
+		} while (newPrice < 0);
+
+		list.push_back({ newName, newQuantity, newPrice });
 
 		//Logging the change to the file
 		log("Added " + to_string(newQuantity) + " of \"" + newName + "\" with price $" + to_string(newPrice));//Removed the log message variable bc it's not needed
 	}
 
+	/*
 	//Gets the index of an item in the list that matches the provided string
 	//Need to add case indifference
 	int findItemIndex(string itemDesired) {
@@ -136,7 +192,7 @@ public:
 
 	//Gets a reference of an item in the list that matches the provided string
 	//Need to add case indifference
-	Item& findItem(string itemDesired) {
+	Item& findItemOld(string itemDesired) {
 		//Go through the entire inventory list and compare their name with the name of the desired item
 		for (Item& item : list) {
 			if (item.name == itemDesired) {
@@ -145,6 +201,21 @@ public:
 		}
 		return list[0];//So if no item is found the entire program doesn't shit the bed and die
 	}
+	*/
+
+	bool findItem(Item *&ptr, string itemDesired) {
+		transform(itemDesired.begin(), itemDesired.end(), itemDesired.begin(), ::toupper);
+		for (Item& item : list) {
+			if (item.name == itemDesired) {
+				ptr = &item;
+				cout << "\"" << item.name << "\" matches search.\n";
+				return true;
+			}
+			cout << "\""  << item.name << "\" doesn't match search.\n";
+		}
+		cout << "Could not find \"" << itemDesired << "\" in list.\n";
+		return false;
+	}
 
 	//Testing stuff
 	void itemFuckery() {
@@ -152,22 +223,37 @@ public:
 		string itemDesired = "Jam";
 
 		displayInventory();
-		cout << (*ptr).name << endl;
-
+		//cout << (*ptr).name << endl;
+		/*
 		ptr = &list[findItemIndex(itemDesired)];//I hate this but it works
 		cout << (*ptr).name << endl;
 		(*ptr).name = "Jimmy Johnson";
 		displayInventory();
 
-		findItem(itemDesired).name = "George";
+		findItemOld(itemDesired).name = "George";
 		displayInventory();
+		*/
+		if (findItem(ptr, itemDesired)) {
+			(*ptr).name = "Jimmy Johson";
+		}
+		if (findItem(ptr, "jim")) {
+			(*ptr).name = "Jimmy Johson";
+		}
+		displayInventory();
+
 	}
 
 	void editItem() {
-		string desiredItem;
+		string desiredItem,
+			input,
+			newName;
 		Item* selectedItem = &list[0];
-		int menuOption;
+		int 
+			newQuantity,
+			newPrice,
+			menuOption;
 
+		/*
 		//Menu Inputs
 		cout << " 1:Edit Name | 2:Edit Quantity | 3:Edit Price | 0:Exit\n";
 		do {
@@ -183,6 +269,65 @@ public:
 				break;
 			case 3:
 				break;
+			default:
+				cout << "Invalid input\n";
+			}
+		} while (menuOption != 0);
+		*/
+
+		//cout << " Enter the name of the item you wish to edit:\n";
+		//cin >> desiredItem;
+
+		//Menu Inputs
+		cout << " 1:Edit Name | 2:Edit Quantity | 3:Edit Price | 0:Exit\n";
+		do {
+			cin >> menuOption;
+			switch (menuOption) {
+			case 0:// Exit menu
+				break;
+			case 1: //edit name
+				cout << "editing \"" << (*selectedItem).name << "\": ";
+				//cout << "enter new name (leave empty to keep\"" << (*selectedItem).name << "\"):";
+				cin.ignore();
+				getline(cin, newName);
+				if (newName.empty()) {
+					cout << "ERROR: Input field is empty";
+				}
+				else {
+					(*selectedItem).name = newName;
+					//menuOption = 0;
+				}
+				break;
+
+			case 2://edit quantity
+				cout << "editing \"" << (*selectedItem).name << "\"): ";
+				cout << "enter new quantity (current: " << (*selectedItem).quantity << "): ";
+				cin >> input;
+				try {
+					newQuantity = stoi(input);
+					if (newQuantity >= 0) (*selectedItem).quantity = newQuantity;
+					else cout << "quantity must be non-negative. keeping original quantity.\n";
+				}
+				catch (...) {
+					cout << "invalid input. keeping original quantity.\n";
+				}
+
+				break;
+
+			case 3://editing price
+				cout << "editing \"" << (*selectedItem).name << "\"): ";
+				cout << "enter new price (current: $" << (*selectedItem).price << "): ";
+				cin >> input;
+				try {
+					newPrice = stoi(input);
+					if (newPrice >= 0) (*selectedItem).price = newPrice;
+					else cout << "price must be non -negative keeping orginal value\n";
+				}
+				catch (...) {
+					cout << "Invalid input keeping original value\n";
+				}
+				break;
+
 			default:
 				cout << "Invalid input\n";
 			}
@@ -259,6 +404,7 @@ int main()
 	test.inventoryName = "test inventory";
 
 	//timestamp();
-	//test.menu();
-	test.itemFuckery();
+	test.loadInventory();
+	test.menu();
+	//test.itemFuckery();
 }
