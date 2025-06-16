@@ -208,10 +208,8 @@ public:
 		for (Item& item : list) {
 			if (item.name == itemDesired) {
 				ptr = &item;
-				cout << "\"" << item.name << "\" matches search.\n";
 				return true;
 			}
-			cout << "\""  << item.name << "\" doesn't match search.\n";
 		}
 		cout << "Could not find \"" << itemDesired << "\" in list.\n";
 		return false;
@@ -220,25 +218,16 @@ public:
 	//Testing stuff
 	void itemFuckery() {
 		Item* ptr = &list[0];
-		string itemDesired = "Jam";
+		//vector<Item>::iterator it = list.begin();
+		string itemDesired = "jam";
+		int index;
 
 		displayInventory();
-		//cout << (*ptr).name << endl;
-		/*
-		ptr = &list[findItemIndex(itemDesired)];//I hate this but it works
-		cout << (*ptr).name << endl;
-		(*ptr).name = "Jimmy Johnson";
-		displayInventory();
+		cout << endl;
 
-		findItemOld(itemDesired).name = "George";
-		displayInventory();
-		*/
-		if (findItem(ptr, itemDesired)) {
-			(*ptr).name = "Jimmy Johson";
-		}
-		if (findItem(ptr, "jim")) {
-			(*ptr).name = "Jimmy Johson";
-		}
+		if (!findItem(ptr, itemDesired)) return;//Interesting
+		index = ptr - &list[0];
+		list.erase(list.begin() + index);
 		displayInventory();
 
 	}
@@ -253,45 +242,36 @@ public:
 			newPrice,
 			menuOption;
 
-		/*
-		//Menu Inputs
-		cout << " 1:Edit Name | 2:Edit Quantity | 3:Edit Price | 0:Exit\n";
+		//Chose an item from the list
+		cin.ignore();
 		do {
-			cin >> menuOption;
-			switch (menuOption) {
-			case 0:// Exit menu
-				break;
-			case 1:
-				(*selectedItem).name = "Jimmy Johson";
-				cout << endl << (*selectedItem).name << endl << (*selectedItem).name;
-				break;
-			case 2:
-				break;
-			case 3:
-				break;
-			default:
-				cout << "Invalid input\n";
+			cout << "Enter the name of the item you want to edit.\nEnter \"0\" to exit.\n";
+			getline(cin, desiredItem);
+			if (desiredItem == "0") {
+				return;
 			}
-		} while (menuOption != 0);
-		*/
+		}while (!findItem(selectedItem, desiredItem));
 
-		//cout << " Enter the name of the item you wish to edit:\n";
-		//cin >> desiredItem;
+		selectedItem += 1;
+		system("cls");
+		cout << "Editing: " << (*selectedItem).name << endl;
 
 		//Menu Inputs
-		cout << " 1:Edit Name | 2:Edit Quantity | 3:Edit Price | 0:Exit\n";
+		
 		do {
+			cout << " 1:Edit Name | 2:Edit Quantity | 3:Edit Price | 0:Exit\n";
 			cin >> menuOption;
 			switch (menuOption) {
 			case 0:// Exit menu
 				break;
 			case 1: //edit name
-				cout << "editing \"" << (*selectedItem).name << "\": ";
+				cout << "Enter new name for \"" << (*selectedItem).name << "\" or leave empty to keep name";
 				//cout << "enter new name (leave empty to keep\"" << (*selectedItem).name << "\"):";
 				cin.ignore();
 				getline(cin, newName);
+				transform(newName.begin(), newName.end(), newName.begin(), ::toupper);
 				if (newName.empty()) {
-					cout << "ERROR: Input field is empty";
+					cout << "ERROR: Input field is empty\n";
 				}
 				else {
 					(*selectedItem).name = newName;
@@ -334,12 +314,40 @@ public:
 		} while (menuOption != 0);
 	}
 
+	/*
 	void removeItem() {
 		string input;
 
 		cout << "Chose an item to remove\n";
 		cin.ignore();
 		getline(cin, input);
+
+	}
+	*/
+	
+
+	void removeItem() {
+		string desiredItem,
+			input;
+		Item* selectedItem;
+		int index;
+
+		cout << "Chose an item to remove\n";
+		cin.ignore();
+		getline(cin, desiredItem);
+		if (findItem(selectedItem, desiredItem)) {
+			cout << "Removing \"" << selectedItem->name << "\" from inventory are you sure? y/n\n";
+			cin >> input;
+			if (input == "y") {
+				index = selectedItem - &list[0];
+				cout << "\"" << (*selectedItem).name << "\" removed from inventory\n";
+				list.erase(list.begin() + index);
+			}
+			else {
+				cout << "operation cancelled\n";
+			}
+		}
+
 
 	}
 
