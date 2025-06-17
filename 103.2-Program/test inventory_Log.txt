@@ -5,3 +5,6 @@ Added 3 of "Item 5" with price $1000
 Added 3 of "ITEM 4" with price $1500
 Added 2 of "ITEM 4" with price $1000
 Added 4 of "ITEM 1" with price $3600
+Added 3 of "ITEM 5" with price $1400
+Added 3 of "ITEM 5" with price $1500
+Added 0 of "0" with price $0

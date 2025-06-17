@@ -8,11 +8,42 @@
 #include <iomanip>//Used for output formating such as setw();
 #include <string>
 #include <vector>
+#include <list>
 #include <fstream>
 #include <ctime>
 #include <algorithm>
 
 using namespace std;
+
+class Employees {
+public:
+	list<string> employeeName = {"Johnny","Joey","Jeremy","Jamie","Jackie","Jeffrey"};
+
+	void displayList() {
+
+	}
+
+	void addEmployee(string employeeName) {
+
+	}
+
+	void editEmployee(string employeeName) {
+
+	}
+
+	void removeEmployee(string employeeName) {
+
+	}
+
+	void saveList() {
+
+	}
+
+	void loadList() {
+
+	}
+
+};
 
 class Inventory {
 public:
@@ -111,32 +142,12 @@ public:
 
 	//Creates a new inventory listing
 	void addItem(){
-		/*TO-DO!
-		* -getline(); for name input
-		* -check if name is already used
-		* -check for valid quantity (e.g. not negative)
-		* -price input formating (accepting 15.99 as a valid price)
-		* -check for valid price (e.g. cant input $5.999)
-		*/
 		string
-			//logMessage,
 			newName;
 		int 
 			newQuantity,
 			newPrice;
 
-		/*
-		//Taking inputs for new inventory item
-		cout << "Input new item name\n";
-		cin.ignore();
-		getline(cin, newName);
-		cout << "Input Quantity of items\n";
-		cin >> newQuantity;
-		cout << "Input new item price\n$";
-		cin >> newPrice;
-		list.push_back({newName, newQuantity, newPrice});
-		cout << "\n\n";
-		*/
 
 		cout << "Input new item name:\n";
 		cin.ignore();
@@ -175,34 +186,6 @@ public:
 		log("Added " + to_string(newQuantity) + " of \"" + newName + "\" with price $" + to_string(newPrice));//Removed the log message variable bc it's not needed
 	}
 
-	/*
-	//Gets the index of an item in the list that matches the provided string
-	//Need to add case indifference
-	int findItemIndex(string itemDesired) {
-		int index = 0;
-		//Go through the entire inventory list and compare their name with the name of the desired item
-		for (Item item : list) {
-			if (item.name == itemDesired) {
-				return index;
-			}
-			index++;
-		}
-		return 0;
-	}
-
-	//Gets a reference of an item in the list that matches the provided string
-	//Need to add case indifference
-	Item& findItemOld(string itemDesired) {
-		//Go through the entire inventory list and compare their name with the name of the desired item
-		for (Item& item : list) {
-			if (item.name == itemDesired) {
-				return item;
-			}
-		}
-		return list[0];//So if no item is found the entire program doesn't shit the bed and die
-	}
-	*/
-
 	bool findItem(Item *&ptr, string itemDesired) {
 		transform(itemDesired.begin(), itemDesired.end(), itemDesired.begin(), ::toupper);
 		for (Item& item : list) {
@@ -233,6 +216,9 @@ public:
 	}
 
 	void editItem() {
+		/*TO-DO
+		* Add log functionality
+		*/
 		string desiredItem,
 			input,
 			newName;
@@ -245,14 +231,13 @@ public:
 		//Chose an item from the list
 		cin.ignore();
 		do {
-			cout << "Enter the name of the item you want to edit.\nEnter \"0\" to exit.\n";
+			cout << "Enter the name of the item you want to edit.\nEnter \"0\" to cancel.\n";
 			getline(cin, desiredItem);
 			if (desiredItem == "0") {
 				return;
 			}
 		}while (!findItem(selectedItem, desiredItem));
 
-		selectedItem += 1;
 		system("cls");
 		cout << "Editing: " << (*selectedItem).name << endl;
 
@@ -260,7 +245,7 @@ public:
 		
 		do {
 			cout << " 1:Edit Name | 2:Edit Quantity | 3:Edit Price | 0:Exit\n";
-			cin >> menuOption;
+			cin >> menuOption;//entering non int input creates infinite loop
 			switch (menuOption) {
 			case 0:// Exit menu
 				break;
@@ -314,19 +299,10 @@ public:
 		} while (menuOption != 0);
 	}
 
-	/*
 	void removeItem() {
-		string input;
-
-		cout << "Chose an item to remove\n";
-		cin.ignore();
-		getline(cin, input);
-
-	}
-	*/
-	
-
-	void removeItem() {
+		/*TO-DO
+		* Add log functionality
+		*/
 		string desiredItem,
 			input;
 		Item* selectedItem;
@@ -388,7 +364,7 @@ public:
 			case 3:// Remove inventory item
 				if (!emptyCheck()) {
 					removeItem();
-					//system("cls");
+					system("cls");
 					return menu();
 				}
 				break;
