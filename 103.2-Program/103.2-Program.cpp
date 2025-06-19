@@ -17,7 +17,9 @@ using namespace std;
 
 class Employees {
 public:
-	list<string> employeeName = {"Johnny","Joey","Jeremy","Jamie","Jackie","Jeffrey"};
+	string
+		rosterName;
+	list<string> employeeNames = {"Johnny","Joey","Jeremy","Jamie","Jackie","Jeffrey"};
 
 	void displayList() {
 
@@ -100,7 +102,7 @@ public:
 	/*
 	-Add Log functionality
 	*/
-	void SaveInventory() {
+	void saveInventory() {
 		ofstream InventoryFile(inventoryName + "_Inventory.csv");
 
 		// Error prevention
@@ -114,7 +116,7 @@ public:
 			InventoryFile << item.name << "," << item.quantity << "," << item.price << "\n";
 		}
 		InventoryFile.close();
-		cout << "Inventory has been saved to Inventory.csv\n";
+		cout << "Inventory has been saved to \"" + inventoryName + "_Inventory.csv\"\n";
 	}
 
 	void loadInventory() {
@@ -183,7 +185,7 @@ public:
 		list.push_back({ newName, newQuantity, newPrice });
 
 		//Logging the change to the file
-		log("Added " + to_string(newQuantity) + " of \"" + newName + "\" with price $" + to_string(newPrice));//Removed the log message variable bc it's not needed
+		log("Added: " + to_string(newQuantity) + " of \"" + newName + "\" with price: $" + to_string(newPrice));//Removed the log message variable bc it's not needed
 	}
 
 	bool findItem(Item *&ptr, string itemDesired) {
@@ -239,56 +241,99 @@ public:
 		}while (!findItem(selectedItem, desiredItem));
 
 		system("cls");
-		cout << "Editing: " << (*selectedItem).name << endl;
 
 		//Menu Inputs
-		
 		do {
-			cout << " 1:Edit Name | 2:Edit Quantity | 3:Edit Price | 0:Exit\n";
+			cout << "Editing: " << (*selectedItem).name << "\nQuantity: " << (*selectedItem).quantity << "\nPrice: $" << (*selectedItem).price << endl;
+			cout << " 1:Change Name | 2:Add Quantity | 3:Remove Quantity | 4:Change Price | 0:Exit\n";
+			
 			cin >> menuOption;//entering non int input creates infinite loop
 			switch (menuOption) {
 			case 0:// Exit menu
 				break;
+
 			case 1: //edit name
 				cout << "Enter new name for \"" << (*selectedItem).name << "\" or leave empty to keep name";
 				//cout << "enter new name (leave empty to keep\"" << (*selectedItem).name << "\"):";
 				cin.ignore();
 				getline(cin, newName);
 				transform(newName.begin(), newName.end(), newName.begin(), ::toupper);
-				if (newName.empty()) {
-					cout << "ERROR: Input field is empty\n";
-				}
-				else {
+				if (!newName.empty()) {
+
+					//Log changes
+					log("Changed name of \"" + (*selectedItem).name + "\" to \"" + newName + "\"");
+
 					(*selectedItem).name = newName;
-					//menuOption = 0;
 				}
+				system("cls");
 				break;
 
-			case 2://edit quantity
-				cout << "editing \"" << (*selectedItem).name << "\"): ";
-				cout << "enter new quantity (current: " << (*selectedItem).quantity << "): ";
+			case 2://Add quantity
+				cout << "Enter quantity to add (current: " << (*selectedItem).quantity << "): ";
 				cin >> input;
 				try {
 					newQuantity = stoi(input);
-					if (newQuantity >= 0) (*selectedItem).quantity = newQuantity;
-					else cout << "quantity must be non-negative. keeping original quantity.\n";
+					system("cls");
+					if (newQuantity > 0){
+
+						//Log changes
+						log("Added: " + to_string(newQuantity) + " of \"" + (*selectedItem).name + "\" (From: " + to_string((*selectedItem).quantity) + " to: " + to_string((*selectedItem).quantity + newQuantity) + ")");
+						
+						(*selectedItem).quantity += newQuantity;
+				}
+					else cout << "Invalid input. Input must be greater than 0.\n";
 				}
 				catch (...) {
-					cout << "invalid input. keeping original quantity.\n";
+					system("cls");
+					cout << "Invalid input. Input must be an integer\n";
 				}
 
 				break;
 
-			case 3://editing price
-				cout << "editing \"" << (*selectedItem).name << "\"): ";
+			case 3://Remove quantity
+				cout << "Enter quantity to remove (current: " << (*selectedItem).quantity << "): ";
+				cin >> input;
+				try {
+					newQuantity = stoi(input);
+					system("cls");
+					if (newQuantity > 0) {
+						if ((*selectedItem).quantity - newQuantity < 0) {
+							cout << "ERROR! Operation would result in negative quantity of stock.\n";
+						}
+						else {
+
+							//Log changes
+							log("Removed " + to_string(newQuantity) + " of \"" + (*selectedItem).name + "\" (From " + to_string((*selectedItem).quantity) + " to " + to_string((*selectedItem).quantity - newQuantity) + ")");
+							
+							(*selectedItem).quantity -= newQuantity;
+						}
+					}
+					else cout << "Invalid input. Input must be greater than 0.\n";
+				}
+				catch (...) {
+					system("cls");
+					cout << "Invalid input. Input must be an integer\n";
+				}
+
+				break;
+
+			case 4://editing price
 				cout << "enter new price (current: $" << (*selectedItem).price << "): ";
 				cin >> input;
 				try {
 					newPrice = stoi(input);
-					if (newPrice >= 0) (*selectedItem).price = newPrice;
+					system("cls");
+					if (newPrice >= 0) {
+
+						//Log changes
+						log("Set price of \"" + (*selectedItem).name + "\" from: $" + to_string((*selectedItem).price) + " to: $" + to_string(newPrice));
+
+						(*selectedItem).price = newPrice;
+					}
 					else cout << "price must be non -negative keeping orginal value\n";
 				}
 				catch (...) {
+					system("cls");
 					cout << "Invalid input keeping original value\n";
 				}
 				break;
@@ -300,13 +345,10 @@ public:
 	}
 
 	void removeItem() {
-		/*TO-DO
-		* Add log functionality
-		*/
 		string desiredItem,
 			input;
 		Item* selectedItem;
-		int index;
+		int index;//For remove from vector jank
 
 		cout << "Chose an item to remove\n";
 		cin.ignore();
@@ -317,6 +359,11 @@ public:
 			if (input == "y") {
 				index = selectedItem - &list[0];
 				cout << "\"" << (*selectedItem).name << "\" removed from inventory\n";
+
+				//Logging the change to the file
+				log("Deleted item \"" + (*selectedItem).name + "\". Had quantity: " + to_string((*selectedItem).quantity) + " and price: $" + to_string((*selectedItem).price));
+
+				//Removing selected item from list
 				list.erase(list.begin() + index);
 			}
 			else {
@@ -382,13 +429,19 @@ void timestamp() {
 
 }
 
+void runInventory(Inventory inv);
+
 int main()
 {
 	Inventory test;
 	test.inventoryName = "test inventory";
 
 	//timestamp();
-	test.loadInventory();
-	test.menu();
-	//test.itemFuckery();
+	runInventory(test);
+}
+
+void runInventory(Inventory inv) {
+	inv.loadInventory();
+	inv.menu();
+	inv.saveInventory();
 }

@@ -1,10 +1,20 @@
-Added 35 of "Item 4" with price $300
-Added 15 of "Item 4" with price $300
-Added 15 of "Item 4" with price $200
-Added 3 of "Item 5" with price $1000
-Added 3 of "ITEM 4" with price $1500
-Added 2 of "ITEM 4" with price $1000
-Added 4 of "ITEM 1" with price $3600
-Added 3 of "ITEM 5" with price $1400
-Added 3 of "ITEM 5" with price $1500
-Added 0 of "0" with price $0
+Added 3 of "TEST ITEM" with price $2000
+Removed "TEST ITEM" of TEST ITEM" with price $TEST ITEM
+Added 2 of "TEST ITEM" with price $15
+Removed "TEST ITEM" with quantity 2 and price $15
+Added 3 of "TEST ITEM" with price $15
+Deleted item "TEST ITEM". Had quantity 3 and price $15
+Added 1 of "BATTLE PASS" with price $1299
+Set price of "BATTLE PASS" to: $13 from: $1399
+Set price of "BATTLE PASS" to $999999 from $13
+Set price of "BATTLE PASS" to $0 from $999999
+Changed name of "BATTLE PASS" to "AK 47"
+Added 999 of "AK 47" (From 0 to 999)
+Set price of "AK 47" to $5 from $0
+Deleted item "AK 47". Had quantity 999 and price $5
+Set price of "JAM" from: $299 to: $499
+Added: 15 of "TEST ITEM" with price: $2500
+Added: 15 of "TEST ITEM" with price: $5200
+Changed name of "TEST ITEM" to "ITEM 5"
+Removed 2 of "ITEM 5" (From 15 to 13)
+Set price of "ITEM 5" from: $5200 to: $15
