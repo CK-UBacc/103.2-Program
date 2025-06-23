@@ -47,6 +47,85 @@ public:
 
 };
 
+class Roster {
+public:
+	struct {
+		string day[7] = { "Monday", "Tudesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday" };
+		
+		list<string> employeeList[7];
+	} roster;
+
+	void displayRoster() {
+		for (int i = 0; i < 7; i++) {
+			cout << roster.day[i] << ":\n";
+			if (roster.employeeList[i].empty()) {
+				cout << "No employees asigned to this day";
+			}
+			else {
+				for (string j : roster.employeeList[i]) {
+					cout << "\"" << j << "\", ";
+				}
+			}
+			cout << "\n\n";
+		}
+	}
+
+	void addToRoster(string employee, int day) {
+		roster.employeeList[day].push_back(employee);
+	}
+
+	void removeFromRoster(string employee, int day) {
+		for (string i : roster.employeeList[day]) {
+			if (employee == i) {
+				roster.employeeList[day].remove(employee);
+				return;//Stops program from crashing. Fun.
+			}
+		}
+		cout << "ERROR! Could not find \"" << employee << "\" working on " << roster.day[day] << ".\n";
+	}
+
+	void loadRoster() {
+		ifstream RosterFile("test_Roster.csv");
+
+		string input;
+
+		if (!RosterFile) {
+			cout << "Inventory file cannot be found.\n";
+			return;
+		}
+		for (int i = 0; i < 7; i++) {
+			while (getline(RosterFile, input, ',')) {
+				if (input == "\n") break; //Jank fix for loading
+				roster.employeeList[i].push_back(input);
+			}
+		}
+
+		RosterFile.close();
+		cout << "Inventory has been loaded from file\n";
+	}
+
+	void saveRoster() {
+		ofstream RosterFile("test_Roster.csv");
+
+		// Error prevention
+		if (!RosterFile) {
+			cout << "Error opening file.\n";
+			return;
+		}
+
+		// Adds and formats each item
+		for (int i = 0; i < 7; i++) {
+			for (string j : roster.employeeList[i]) {
+				RosterFile << j << ",";
+			}
+			RosterFile << "\n,";//Needs the comma before the newline character for jank fix for loading the file.
+		}
+
+		RosterFile.close();
+		cout << "Roster has been saved to \"" << "test_Roster.csv" << "\".";
+	}
+};
+
 class Inventory {
 public:
 	string 
@@ -430,14 +509,35 @@ void timestamp() {
 }
 
 void runInventory(Inventory inv);
+void fucker(Roster &roster);
 
 int main()
 {
 	Inventory test;
 	test.inventoryName = "test inventory";
 
+	Roster testRoster;
+
+
 	//timestamp();
-	runInventory(test);
+	//runInventory(test);
+	testRoster.loadRoster();
+	testRoster.displayRoster();
+	testRoster.saveRoster();
+	fucker(testRoster);
+	testRoster.displayRoster();
+}
+
+void fucker(Roster &roster) {
+	string name;
+	int day;
+
+	cout << "Who would you like to kill\n";
+	getline(cin, name);
+	cout << "And when are they working?\n";
+	cin >> day;
+	system("cls");
+	roster.removeFromRoster(name, day);
 }
 
 void runInventory(Inventory inv) {

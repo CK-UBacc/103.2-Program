@@ -131,6 +131,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="test inventory_Inventory.csv" />
+    <None Include="test_Roster.csv" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="test inventory_Log.txt" />

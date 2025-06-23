@@ -23,6 +23,9 @@
     <None Include="test inventory_Inventory.csv">
       <Filter>Source Files</Filter>
     </None>
+    <None Include="test_Roster.csv">
+      <Filter>Source Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Text Include="test inventory_Log.txt">
