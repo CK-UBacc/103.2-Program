@@ -15,45 +15,189 @@
 
 using namespace std;
 
-class Employees {
+/*
+class EmployeeManager {
 public:
 	string
-		rosterName;
-	list<string> employeeNames = {"Johnny","Joey","Jeremy","Jamie","Jackie","Jeffrey"};
+		rosterName,
+		employeesFileName = "EmployeeList.csv";
+	list<string> employeeNames; //= { "Johnny","Joey","Jeremy","Jamie","Jackie","Jeffrey" };
 
 	void displayList() {
-
+		for (string employeeName : employeeNames) {
+			cout << employeeName << "\n";
+		}
 	}
 
 	void addEmployee(string employeeName) {
-
+		
+		//cout << "Enter the name of the employee to add";
+		//getline(cin, employeeName);
+		
+		employeeNames.push_back(employeeName);
 	}
 
+	//Ignore for now
 	void editEmployee(string employeeName) {
 
 	}
 
+
+
 	void removeEmployee(string employeeName) {
+		// finds the employee in the list
+		auto it = find(employeeNames.begin(), employeeNames.end(), employeeName);
 
+		// removes employee if found in list
+		if (it != employeeNames.end()) {
+			employeeNames.erase(it);
+			cout << "Employee \"" << employeeName << "\" has been removed from the list.\n";
+		}
+		else {
+			cout << "Employee \"" << employeeName << "\" not found in the list.\n";
+		}
 	}
 
-	void saveList() {
+	void saveEmployees() {
+		// Save employee list to CSV file
+		ofstream EmployeeFile(employeesFileName);
 
+		if (!EmployeeFile) {
+			cout << "Error opening file for saving.\n";
+			return;
+		}
+
+		// writes employee name to file from employee list
+		for (const string& employeeName : employeeNames) {
+			EmployeeFile << employeeName << "\n";
+		}
+
+		EmployeeFile.close();
+		cout << "Employee list has been saved to EmployeeList.csv\n";
 	}
 
-	void loadList() {
+	void loadEmployees() {
+		ifstream EmployeeFile(employeesFileName);
 
+		if (!EmployeeFile) {
+			if (!EmployeeFile) {
+				cout << "ERROR! An error occured when loading list.\n";
+				//No - Chris
+				//cout << "Employee file not found. Initializing with default employees.\n";
+				//employeeNames = { "Peter Griffin","Glenn Quagmire","Cleveland Brown","Joe Swanson" };
+				return;
+			}
+		}
+
+		// clears the existing list
+		employeeNames.clear();
+
+		// reads each line from file and adds to list
+		string employeeName;
+		while (getline(EmployeeFile, employeeName)) {
+			employeeNames.push_back(employeeName);
+		}
+
+		EmployeeFile.close();
+		cout << "Employee list loaded from EmployeeList.csv\n";
 	}
 
 };
+*/
 
-class Roster {
+class RosterManager {
 public:
+	string
+		rosterFileName = "test_Roster.csv",
+		rosterName,
+		employeesFileName = "EmployeeList.csv";
+
 	struct {
 		string day[7] = { "Monday", "Tudesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday" };
 		
 		list<string> employeeList[7];
 	} roster;
+
+	list<string> employeeNames; //= { "Johnny","Joey","Jeremy","Jamie","Jackie","Jeffrey" };
+
+	void displayEmployeeList() {
+		for (string employeeName : employeeNames) {
+			cout << employeeName << "\n";
+		}
+	}
+
+	void addEmployee(string employeeName) {
+		/*
+		cout << "Enter the name of the employee to add";
+		getline(cin, employeeName);
+		*/
+		employeeNames.push_back(employeeName);
+	}
+
+	//Ignore for now
+	void editEmployee(string employeeName) {
+
+	}
+
+
+
+	void removeEmployee(string employeeName) {
+		// finds the employee in the list
+		auto it = find(employeeNames.begin(), employeeNames.end(), employeeName);
+
+		// removes employee if found in list
+		if (it != employeeNames.end()) {
+			employeeNames.erase(it);
+			cout << "Employee \"" << employeeName << "\" has been removed from the list.\n";
+		}
+		else {
+			cout << "Employee \"" << employeeName << "\" not found in the list.\n";
+		}
+	}
+
+	void saveEmployees() {
+		// Save employee list to CSV file
+		ofstream EmployeeFile(employeesFileName);
+
+		if (!EmployeeFile) {
+			cout << "Error opening file for saving.\n";
+			return;
+		}
+
+		// writes employee name to file from employee list
+		for (const string& employeeName : employeeNames) {
+			EmployeeFile << employeeName << "\n";
+		}
+
+		EmployeeFile.close();
+		cout << "Employee list has been saved to EmployeeList.csv\n";
+	}
+
+	void loadEmployees() {
+		ifstream EmployeeFile(employeesFileName);
+
+		if (!EmployeeFile) {
+			if (!EmployeeFile) {
+				cout << "ERROR! An error occured when loading list.\n";
+				//No - Chris
+				//cout << "Employee file not found. Initializing with default employees.\n";
+				//employeeNames = { "Peter Griffin","Glenn Quagmire","Cleveland Brown","Joe Swanson" };
+				return;
+			}
+		}
+
+		// clears the existing list
+		employeeNames.clear();
+
+		// reads each line from file and adds to list
+		string employeeName;
+		while (getline(EmployeeFile, employeeName)) {
+			employeeNames.push_back(employeeName);
+		}
+
+		EmployeeFile.close();
+		cout << "Employee list loaded from EmployeeList.csv\n";
+	}
 
 	void displayRoster() {
 		for (int i = 0; i < 7; i++) {
@@ -85,12 +229,12 @@ public:
 	}
 
 	void loadRoster() {
-		ifstream RosterFile("test_Roster.csv");
+		ifstream RosterFile(rosterFileName);
 
 		string input;
 
 		if (!RosterFile) {
-			cout << "Inventory file cannot be found.\n";
+			cout << "Roster file cannot be found.\n";
 			return;
 		}
 		for (int i = 0; i < 7; i++) {
@@ -101,11 +245,11 @@ public:
 		}
 
 		RosterFile.close();
-		cout << "Inventory has been loaded from file\n";
+		cout << "Roster has been loaded from \"" << rosterFileName << "\"\n";
 	}
 
 	void saveRoster() {
-		ofstream RosterFile("test_Roster.csv");
+		ofstream RosterFile(rosterFileName);
 
 		// Error prevention
 		if (!RosterFile) {
@@ -122,14 +266,19 @@ public:
 		}
 
 		RosterFile.close();
-		cout << "Roster has been saved to \"" << "test_Roster.csv" << "\".";
+		cout << "Roster has been saved to \"" << rosterFileName << "\".";
 	}
-};
 
-class Inventory {
+	void rosterMenu() {
+
+	}
+};//End of RosterManager
+
+class InventoryManager {
 public:
 	string 
-		inventoryName = "UNINITIALIZED";
+		inventoryName = "UNINITIALIZED",
+		inventoryFileName = inventoryName + "_Inventory.csv";
 
 	struct Item{
 		string
@@ -178,11 +327,8 @@ public:
 	}
 
 	// Saves the inventory to a file to later be loaded
-	/*
-	-Add Log functionality
-	*/
 	void saveInventory() {
-		ofstream InventoryFile(inventoryName + "_Inventory.csv");
+		ofstream InventoryFile(inventoryFileName);
 
 		// Error prevention
 		if (!InventoryFile) {
@@ -199,7 +345,7 @@ public:
 	}
 
 	void loadInventory() {
-		ifstream InventoryFile(inventoryName + "_Inventory.csv");
+		ifstream InventoryFile(inventoryFileName);
 		if (!InventoryFile) {
 			cout << "Inventory file cannot be found.\n";
 			return;
@@ -280,6 +426,7 @@ public:
 	}
 
 	//Testing stuff
+	/*
 	void itemFuckery() {
 		Item* ptr = &list[0];
 		//vector<Item>::iterator it = list.begin();
@@ -295,11 +442,9 @@ public:
 		displayInventory();
 
 	}
+	*/
 
 	void editItem() {
-		/*TO-DO
-		* Add log functionality
-		*/
 		string desiredItem,
 			input,
 			newName;
@@ -462,7 +607,7 @@ public:
 		return false;
 	}
 
-	void menu() {
+	void inventoryMenu() {
 		int menuOption;
 
 		//Display inventory and menu options
@@ -479,19 +624,19 @@ public:
 			case 1:// Add inventory item
 				addItem();
 				system("cls");
-				return menu();
+				return inventoryMenu();
 			case 2:// Edit inventory item
 				if (!emptyCheck()) {
 					editItem();
 					system("cls");
-					return menu();
+					return inventoryMenu();
 				}
 				break;
 			case 3:// Remove inventory item
 				if (!emptyCheck()) {
 					removeItem();
 					system("cls");
-					return menu();
+					return inventoryMenu();
 				}
 				break;
 			default:
@@ -508,27 +653,85 @@ void timestamp() {
 
 }
 
-void runInventory(Inventory inv);
-void fucker(Roster &roster);
+void runInventory(InventoryManager inv);
+void runRoster(RosterManager &roster);
+void testRunRoster(RosterManager& roster);
+//void runEmployee(EmployeeManager& employee);
+//void rosterMenu(RosterManager& roster, EmployeeManager& employees);
 
 int main()
 {
-	Inventory test;
+	InventoryManager test;
 	test.inventoryName = "test inventory";
 
-	Roster testRoster;
+	RosterManager testRoster;
 
+	//EmployeeManager testEmployees;
 
-	//timestamp();
+	//rosterMenu(testRoster, testEmployees);
 	//runInventory(test);
-	testRoster.loadRoster();
-	testRoster.displayRoster();
-	testRoster.saveRoster();
-	fucker(testRoster);
-	testRoster.displayRoster();
+	testRunRoster(testRoster);
+}
+/*
+void rosterMenu(RosterManager& roster, EmployeeManager& employees) {
+	int 
+		menuOption,
+		dayInput;
+	string employeeInput;
+	
+	roster.loadRoster();
+	employees.loadEmployees();
+	cout << "1: Manage Roster | 2: Manage Employees | 0: Exit\n";
+	do {
+		cin >> menuOption;
+		switch (menuOption) {
+		case 0://Exit
+			break;
+		case 1://Manage roster
+			system("cls");
+			roster.displayRoster();
+			cout << "1: Add to day | 2: Remove from day | 0: Exit\n";
+			do {
+				cin >> menuOption;
+				switch (menuOption) {
+				case 0:
+					break;
+				case 1://Add to day
+					roster.addToRoster(employeeInput,dayInput);
+					break;
+				case 2:
+					break;
+				default:
+					cout << "Invalid input";
+				}
+			}while (menuOption != 0);
+			break;
+		case 2:
+			break;
+		default:
+			cout << "Invalid input.\n";
+		}
+	} while (menuOption != 0);
+}
+*/
+
+/*
+void runEmployee(EmployeeManager& employee) {
+	employee.loadEmployees();
+	employee.displayList();
+	//employee.saveList();
+}
+*/
+
+void testRunRoster(RosterManager& roster) {
+	roster.loadEmployees();
+	roster.loadRoster();
+	roster.rosterMenu();
+	roster.saveEmployees();
+	roster.saveRoster();
 }
 
-void fucker(Roster &roster) {
+void runRoster(RosterManager& roster) {
 	string name;
 	int day;
 
@@ -540,8 +743,8 @@ void fucker(Roster &roster) {
 	roster.removeFromRoster(name, day);
 }
 
-void runInventory(Inventory inv) {
+void runInventory(InventoryManager inv) {
 	inv.loadInventory();
-	inv.menu();
+	inv.inventoryMenu();
 	inv.saveInventory();
 }
