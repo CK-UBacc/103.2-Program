@@ -20,34 +20,52 @@ public:
     list<string> employeeNames;
 
     void displayList() {
-        for (string employeeName : employeeNames) {
-            cout << employeeName << endl;
+        cout << "\nCurrent Employee List:\n";
+        cout << "----------------------\n";
+        if (employeeNames.empty()) {
+            cout << "No employees in the list.\n";
+            return;
         }
+        int i = 1;
+        for (const string& employeeName : employeeNames) {
+            cout << i << ". " << employeeName << endl;
+            i++;
+        }
+        cout << "----------------------\n";
     }
 
-    void addEmployee(string employeeName) {
-        cout << "Enter the name of the employee to add";
+    void addEmployee() {
+        string employeeName;
+        cout << "\nEnter the name of the employee to add: ";
         getline(cin, employeeName);
+        
+        if (find(employeeNames.begin(), employeeNames.end(), employeeName) != employeeNames.end()) {
+            cout << "Employee " << employeeName << " already exists in the list.\n";
+            return;
+        }
+        
         employeeNames.push_back(employeeName);
+        cout << "Successfully added employee: " << employeeName << endl;
     }
 
-    void editEmployee(string employeeName) {
-
-    }
-
-    void removeEmployee(string employeeName) {
+    void removeEmployee() {
+        displayList();
+        cout << "\nEnter the name of the employee to remove: ";
+        string employeeName;
+        getline(cin, employeeName);
+        
         // finds the employee in the list
         auto it = find(employeeNames.begin(), employeeNames.end(), employeeName);
 
         // removes employee if found in list
         if (it != employeeNames.end()) {
             employeeNames.erase(it);
+            cout << "Successfully removed employee: " << employeeName << endl;
         }
         else {
             cout << "Employee " << employeeName << " not found in the list.\n";
         }
     }
-
 
     void saveList() {
         // Save employee list to CSV file
@@ -68,14 +86,12 @@ public:
     }
 
     void loadList() {
-        ifstream EmployeeFile("EmployeesList.csv");
+        ifstream EmployeeFile("EmployeeList.csv");
 
         if (!EmployeeFile) {
-            if (!EmployeeFile) {
-                cout << "Employee file not found. Initializing with default employees.\n";
-                employeeNames = { "Peter Griffin","Glenn Quagmire","Cleveland Brown","Joe Swanson"};
-                return;
-            }
+            cout << "Employee file not found. Please contact support.\n";
+
+            return;
         }
 
         // clears the existing list
@@ -90,7 +106,6 @@ public:
         EmployeeFile.close();
         cout << "Employee list loaded from EmployeeList.csv\n";
     }
-
 };
 
 class Inventory {
