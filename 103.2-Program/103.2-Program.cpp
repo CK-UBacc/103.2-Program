@@ -113,7 +113,7 @@ public:
 		employeesFileName = "EmployeeList.csv";
 
 	struct {
-		string day[7] = { "Monday", "Tudesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday" };
+		string day[7] = { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday" };
 
 		list<string> employeeList[7];
 	} roster;
@@ -761,3 +761,4 @@ void runInventory(InventoryManager inv) {
 	inv.inventoryMenu();
 	inv.saveInventory();
 }
+//hi
