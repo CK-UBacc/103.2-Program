@@ -32,9 +32,15 @@
     <None Include="adminFile.csv">
       <Filter>Source Files</Filter>
     </None>
+    <None Include="UNINITIALIZED_Inventory.csv">
+      <Filter>Source Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Text Include="test inventory_Log.txt">
+      <Filter>Source Files</Filter>
+    </Text>
+    <Text Include="Wellington_Log.txt">
       <Filter>Source Files</Filter>
     </Text>
   </ItemGroup>

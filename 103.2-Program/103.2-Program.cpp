@@ -188,10 +188,10 @@ public:
 
 class RosterManager {
 public:
-	string
-		rosterFileName = "test_Roster.csv",
+	string 
 		rosterName,
-		employeesFileName = "EmployeeList.csv";
+		rosterFileName = rosterName + "-Roster.csv",
+		employeesFileName = rosterName + "-EmployeeList.csv";
 
 	struct {
 		string day[7] = { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday" };
@@ -359,7 +359,7 @@ class InventoryManager {
 public:
 	string 
 		inventoryName = "UNINITIALIZED",
-		inventoryFileName = inventoryName + "_Inventory.csv";
+		inventoryFileExtension = "_Inventory.csv";
 
 	struct Item{
 		string
@@ -409,7 +409,7 @@ public:
 
 	// Saves the inventory to a file to later be loaded
 	void saveInventory() {
-		ofstream InventoryFile(inventoryFileName);
+		ofstream InventoryFile(inventoryName + inventoryFileExtension);
 
 		// Error prevention
 		if (!InventoryFile) {
@@ -422,17 +422,16 @@ public:
 			InventoryFile << item.name << "," << item.quantity << "," << item.price << "\n";
 		}
 		InventoryFile.close();
-		cout << "Inventory has been saved to \"" + inventoryName + "_Inventory.csv\"\n";
+		list.clear(); // clears the current inventory
+		cout << "Inventory has been saved to \"" + inventoryName + inventoryFileExtension << "\"\n";
 	}
 
 	void loadInventory() {
-		ifstream InventoryFile(inventoryFileName);
+		ifstream InventoryFile(inventoryName + inventoryFileExtension);
 		if (!InventoryFile) {
 			cout << "Inventory file cannot be found.\n";
 			return;
 		}
-
-		list.clear(); // clears the current inventory
 
 		string name;
 		int quantity, price;
@@ -552,7 +551,11 @@ public:
 			cout << "Editing: " << (*selectedItem).name << "\nQuantity: " << (*selectedItem).quantity << "\nPrice: $" << (*selectedItem).price << endl;
 			cout << " 1:Change Name | 2:Add Quantity | 3:Remove Quantity | 4:Change Price | 0:Exit\n";
 			
-			cin >> menuOption;//entering non int input creates infinite loop
+			while (!(cin >> menuOption)) {
+				cin.clear();
+				cin.ignore();
+				cout << "Entered non integer input\n";
+			}//entering non int input creates infinite loop
 			switch (menuOption) {
 			case 0:// Exit menu
 				break;
@@ -692,13 +695,17 @@ public:
 		int menuOption;
 
 		//Display inventory and menu options
-		cout << "Editing inventory: " << inventoryName << "\n\n";
+		cout << "Managing inventory: " << inventoryName << "\n\n";
 		displayInventory();
 		cout << " 1:New item | 2:Edit item | 3:Remove item | 0:Exit\n";
 
 		//Menu Inputs
 		do {
-			cin >> menuOption;
+			while (!(cin >> menuOption)) {
+				cin.clear();
+				cin.ignore();
+				cout << "Entered non integer input\n";
+			}
 			switch (menuOption) {
 			case 0:// Exit menu
 				break;
@@ -734,7 +741,7 @@ void timestamp() {
 
 }
 
-void runInventory(InventoryManager inv);
+void runInventory(InventoryManager& inv);
 void runRoster(RosterManager &roster);
 void testRunRoster(RosterManager& roster);
 bool adminLogin(LoginManager);
@@ -745,26 +752,143 @@ int main()
 {
 	InventoryManager test;
 	test.inventoryName = "test inventory";
-
 	RosterManager testRoster;
-
 	LoginManager testLogin;
 
-	adminLogin(testLogin);
+	InventoryManager inv;
+	RosterManager ros;
 
-	//EmployeeManager testEmployees;
+	string store;
+	int menuOption;
+	bool loop;
 
-	//rosterMenu(testRoster, testEmployees);
+
 	//runInventory(test);
-	//testRunRoster(testRoster);
+
+	if (!adminLogin(testLogin)) {
+		return 0;
+	}
+	cout << "Choose a store to manage.\n1.Auckland\n2.Wellington\n3.Christchurch\n";
+
+	do {
+		loop = false;
+		while (!(cin >> menuOption)) {
+			cin.clear();
+			cin.ignore();
+			cout << "Entered non integer input\n";
+		}
+		switch (menuOption) {
+		case 0:
+			break;
+		case 1:
+			store = "Auckland";
+			break;
+		case 2:
+			store = "Wellington";
+			break;
+		case 3:
+			store = "Christchurch";
+			break;
+		default:
+			cout << "Invalid input";
+			loop = true;
+		}
+	} while (loop);
+	inv.inventoryName = store;
+	ros.rosterName = store;
+	system("cls");
+
+	cout << "Managing store: \"" << store << "\"\n"
+		<< "1.Manage Inventory\n2.Manage Roster\n3.Manage Employees\n0.Exit\n";
+	/*
+	* -Need to add looping
+	*/
+	do {
+		while (!(cin >> menuOption)) {
+			cin.clear();
+			cin.ignore();
+			cout << "Entered non integer input\n";
+		}
+		switch (menuOption) {
+		case 0:
+			break;
+		case 1://Manage Inventory
+			system("cls");
+			runInventory(inv);
+			break;
+		case 2://Manage Roster
+			ros.rosterMenu();
+			break;
+		case 3://Manage Employees
+			cout << "Manage Employees non-functional.\n";
+			break;
+		default:
+			cout << "Invalid input";
+		}
+	} while (menuOption != 0);
+	
 }
+
+bool adminLogin(LoginManager testLogin) {
+	string
+		usernameInput,
+		passwordInput;
+
+	while (testLogin.noAdmins()) { 
+		testLogin.createAdmin(); 
+		system("cls");
+	}
+	for (int i = 3; i > 0; i--) {
+		cout << "Input Username: ";
+		getline(cin, usernameInput);
+		cout << "Input Password: ";
+		getline(cin, passwordInput);
+		if (!testLogin.login(usernameInput, passwordInput)) {
+			cout << "Invalid Username or Password.\n"<< i - 1 << " login attempts left.\n\n";
+		}
+		else {
+			cout << "Login Success!\n";
+			return true;
+		}
+		
+	}
+	cout << "To many login attempts exiting program.\n";
+	return false;
+}
+
+void testRunRoster(RosterManager& roster) {
+	roster.loadEmployees();
+	roster.loadRoster();
+	roster.rosterMenu();
+	roster.saveEmployees();
+	roster.saveRoster();
+}
+
+void runRoster(RosterManager& roster) {
+	string name;
+	int day;
+
+	cout << "Who would you like to kill\n";
+	getline(cin, name);
+	cout << "And when are they working?\n";
+	cin >> day;
+	system("cls");
+	roster.removeFromRoster(name, day);
+}
+
+void runInventory(InventoryManager& inv) {
+	inv.loadInventory();
+	inv.inventoryMenu();
+	inv.saveInventory();//saves to UNINITIALIZED_Inventory.csv
+}
+
 /*
 void rosterMenu(RosterManager& roster, EmployeeManager& employees) {
-	int 
+	int
 		menuOption,
 		dayInput;
 	string employeeInput;
-	
+
 	roster.loadRoster();
 	employees.loadEmployees();
 	cout << "1: Manage Roster | 2: Manage Employees | 0: Exit\n";
@@ -808,54 +932,3 @@ void runEmployee(EmployeeManager& employee) {
 	//employee.saveList();
 }
 */
-
-bool adminLogin(LoginManager testLogin) {
-	string
-		usernameInput,
-		passwordInput;
-
-	while (testLogin.noAdmins()) { 
-		testLogin.createAdmin(); 
-		system("cls");
-	}
-
-	cout << "Input Username: ";
-	getline(cin, usernameInput);
-	cout << "Input Password: ";
-	getline(cin, passwordInput);
-
-	if (!testLogin.login(usernameInput, passwordInput)) {
-		cout << "Invalid Username or Password.\n";
-		return false;
-	}
-	else {
-		cout << "Login Success!\n";
-		return true;
-	}
-}
-
-void testRunRoster(RosterManager& roster) {
-	roster.loadEmployees();
-	roster.loadRoster();
-	roster.rosterMenu();
-	roster.saveEmployees();
-	roster.saveRoster();
-}
-
-void runRoster(RosterManager& roster) {
-	string name;
-	int day;
-
-	cout << "Who would you like to kill\n";
-	getline(cin, name);
-	cout << "And when are they working?\n";
-	cin >> day;
-	system("cls");
-	roster.removeFromRoster(name, day);
-}
-
-void runInventory(InventoryManager inv) {
-	inv.loadInventory();
-	inv.inventoryMenu();
-	inv.saveInventory();
-}

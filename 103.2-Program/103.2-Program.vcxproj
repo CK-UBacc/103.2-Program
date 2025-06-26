@@ -134,9 +134,11 @@
     <None Include="EmployeeList.csv" />
     <None Include="test inventory_Inventory.csv" />
     <None Include="test_Roster.csv" />
+    <None Include="UNINITIALIZED_Inventory.csv" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="test inventory_Log.txt" />
+    <Text Include="Wellington_Log.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

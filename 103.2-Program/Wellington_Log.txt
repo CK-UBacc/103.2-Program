@@ -1,0 +1,7 @@
+Added: 12 of "TEST ITEM" with price: $1345
+Added: 12 of "TEST ITEM" with price: $1356
+Added: 123 of "TEST ITEM 2" with price: $5134
+Added: 12 of "TEST ITEM" with price: $1245
+Added: 123 of "TEST ITEM 2" with price: $156
+Added: 12 of "TEST ITEM" with price: $1235
+Added: 123 of "TEST ITEM 2" with price: $145
