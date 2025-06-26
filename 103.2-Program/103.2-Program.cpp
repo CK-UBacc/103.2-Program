@@ -15,6 +15,85 @@
 
 using namespace std;
 
+class LoginManager {
+public:
+	string
+		adminFile = "adminFile.csv";
+
+	bool noAdmins()
+	{
+		ifstream AdminFile(adminFile);
+
+		if (!AdminFile) createAdmin();
+		return AdminFile.tellg() == 0 && AdminFile.peek() == ifstream::traits_type::eof();
+	}
+
+	bool login(string usernameInput, string passwordInput) {
+		string
+			validUsername,
+			validPassword;
+		ifstream AdminFile(adminFile);
+
+		while (getline(AdminFile, validUsername, ',') && getline(AdminFile, validPassword)) {
+			if (usernameInput == validUsername && passwordInput == validPassword) {
+				AdminFile.close();
+				return true;
+			}
+		}
+		AdminFile.close();
+		return false;
+	}
+
+	void createAdmin() {
+		string
+			input,
+			usernameInput,
+			passwordInput,
+			passwordConfirm;
+		ofstream AdminFile(adminFile, ios::app);
+		cout << "Create Admin\n";
+		do {
+			cout << "Input Username: ";
+			getline(cin, usernameInput);
+			cout << "Input Password: ";
+			getline(cin, passwordInput);
+			cout << "Confirm Password: ";
+			getline(cin, passwordConfirm);
+			if (passwordConfirm != passwordInput) cout << "\nERROR! Passwords do not match.\n";
+		} while (passwordInput != passwordConfirm);
+		cout << "Confirm creation of User \"" << usernameInput << "\"? Y/N\n";
+		do {
+			getline(cin, input);
+			switch (toupper(input[0])) {
+			case 'Y':
+				AdminFile << usernameInput << ',' << passwordConfirm << '\n';
+				system("cls");
+				cout << "Created User \"" << usernameInput << "\"\n";
+				AdminFile.close();
+				return;
+			case 'N':
+				cout << "Quit admin creation? Y/N\n";
+				do {
+					getline(cin, input);
+					switch (toupper(input[0])) {
+					case 'Y':
+						return;
+					case 'N':
+						system("cls");
+						return createAdmin();
+					default:
+						cout << "Invalid input";
+					}
+				} while (true);
+				break;
+			default:
+				cout << "Invalid Input";
+			}
+		} while (true);
+
+	}
+};
+
 /*
 class EmployeeManager {
 public:
@@ -105,6 +184,8 @@ public:
 };
 */
 
+
+
 class RosterManager {
 public:
 	string
@@ -113,7 +194,7 @@ public:
 		employeesFileName = "EmployeeList.csv";
 
 	struct {
-		string day[7] = { "Monday", "Tudesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday" };
+		string day[7] = { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday" };
 		
 		list<string> employeeList[7];
 	} roster;
@@ -656,6 +737,7 @@ void timestamp() {
 void runInventory(InventoryManager inv);
 void runRoster(RosterManager &roster);
 void testRunRoster(RosterManager& roster);
+bool adminLogin(LoginManager);
 //void runEmployee(EmployeeManager& employee);
 //void rosterMenu(RosterManager& roster, EmployeeManager& employees);
 
@@ -666,11 +748,15 @@ int main()
 
 	RosterManager testRoster;
 
+	LoginManager testLogin;
+
+	adminLogin(testLogin);
+
 	//EmployeeManager testEmployees;
 
 	//rosterMenu(testRoster, testEmployees);
 	//runInventory(test);
-	testRunRoster(testRoster);
+	//testRunRoster(testRoster);
 }
 /*
 void rosterMenu(RosterManager& roster, EmployeeManager& employees) {
@@ -722,6 +808,31 @@ void runEmployee(EmployeeManager& employee) {
 	//employee.saveList();
 }
 */
+
+bool adminLogin(LoginManager testLogin) {
+	string
+		usernameInput,
+		passwordInput;
+
+	while (testLogin.noAdmins()) { 
+		testLogin.createAdmin(); 
+		system("cls");
+	}
+
+	cout << "Input Username: ";
+	getline(cin, usernameInput);
+	cout << "Input Password: ";
+	getline(cin, passwordInput);
+
+	if (!testLogin.login(usernameInput, passwordInput)) {
+		cout << "Invalid Username or Password.\n";
+		return false;
+	}
+	else {
+		cout << "Login Success!\n";
+		return true;
+	}
+}
 
 void testRunRoster(RosterManager& roster) {
 	roster.loadEmployees();

@@ -29,6 +29,9 @@
     <None Include="EmployeeList.csv">
       <Filter>Source Files</Filter>
     </None>
+    <None Include="adminFile.csv">
+      <Filter>Source Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Text Include="test inventory_Log.txt">

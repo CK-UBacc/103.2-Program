@@ -130,6 +130,7 @@
     <ClCompile Include="103.2-Program.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="adminFile.csv" />
     <None Include="EmployeeList.csv" />
     <None Include="test inventory_Inventory.csv" />
     <None Include="test_Roster.csv" />
