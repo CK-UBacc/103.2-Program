@@ -15,45 +15,270 @@
 
 using namespace std;
 
-class Employees {
+class LoginManager {
 public:
 	string
-		rosterName;
-	list<string> employeeNames = {"Johnny","Joey","Jeremy","Jamie","Jackie","Jeffrey"};
+		adminFile = "adminFile.csv";
+
+	bool noAdmins()
+	{
+		ifstream AdminFile(adminFile);
+
+		if (!AdminFile) createAdmin();
+		return AdminFile.tellg() == 0 && AdminFile.peek() == ifstream::traits_type::eof();
+	}
+
+	bool login(string usernameInput, string passwordInput) {
+		string
+			validUsername,
+			validPassword;
+		ifstream AdminFile(adminFile);
+
+		while (getline(AdminFile, validUsername, ',') && getline(AdminFile, validPassword)) {
+			if (usernameInput == validUsername && passwordInput == validPassword) {
+				AdminFile.close();
+				return true;
+			}
+		}
+		AdminFile.close();
+		return false;
+	}
+
+	void createAdmin() {
+		string
+			input,
+			usernameInput,
+			passwordInput,
+			passwordConfirm;
+		ofstream AdminFile(adminFile, ios::app);
+		cout << "Create Admin\n";
+		do {
+			cout << "Input Username: ";
+			getline(cin, usernameInput);
+			cout << "Input Password: ";
+			getline(cin, passwordInput);
+			cout << "Confirm Password: ";
+			getline(cin, passwordConfirm);
+			if (passwordConfirm != passwordInput) cout << "\nERROR! Passwords do not match.\n";
+		} while (passwordInput != passwordConfirm);
+		cout << "Confirm creation of User \"" << usernameInput << "\"? Y/N\n";
+		do {
+			getline(cin, input);
+			switch (toupper(input[0])) {
+			case 'Y':
+				AdminFile << usernameInput << ',' << passwordConfirm << '\n';
+				system("cls");
+				cout << "Created User \"" << usernameInput << "\"\n";
+				AdminFile.close();
+				return;
+			case 'N':
+				cout << "Quit admin creation? Y/N\n";
+				do {
+					getline(cin, input);
+					switch (toupper(input[0])) {
+					case 'Y':
+						return;
+					case 'N':
+						system("cls");
+						return createAdmin();
+					default:
+						cout << "Invalid input";
+					}
+				} while (true);
+				break;
+			default:
+				cout << "Invalid Input";
+			}
+		} while (true);
+
+	}
+};
+
+/*
+class EmployeeManager {
+public:
+	string
+		rosterName,
+		employeesFileName = "EmployeeList.csv";
+	list<string> employeeNames; //= { "Johnny","Joey","Jeremy","Jamie","Jackie","Jeffrey" };
 
 	void displayList() {
-
+		for (string employeeName : employeeNames) {
+			cout << employeeName << "\n";
+		}
 	}
 
 	void addEmployee(string employeeName) {
-
+		
+		//cout << "Enter the name of the employee to add";
+		//getline(cin, employeeName);
+		
+		employeeNames.push_back(employeeName);
 	}
 
+	//Ignore for now
 	void editEmployee(string employeeName) {
 
 	}
 
+
+
 	void removeEmployee(string employeeName) {
+		// finds the employee in the list
+		auto it = find(employeeNames.begin(), employeeNames.end(), employeeName);
 
+		// removes employee if found in list
+		if (it != employeeNames.end()) {
+			employeeNames.erase(it);
+			cout << "Employee \"" << employeeName << "\" has been removed from the list.\n";
+		}
+		else {
+			cout << "Employee \"" << employeeName << "\" not found in the list.\n";
+		}
 	}
 
-	void saveList() {
+	void saveEmployees() {
+		// Save employee list to CSV file
+		ofstream EmployeeFile(employeesFileName);
 
+		if (!EmployeeFile) {
+			cout << "Error opening file for saving.\n";
+			return;
+		}
+
+		// writes employee name to file from employee list
+		for (const string& employeeName : employeeNames) {
+			EmployeeFile << employeeName << "\n";
+		}
+
+		EmployeeFile.close();
+		cout << "Employee list has been saved to EmployeeList.csv\n";
 	}
 
-	void loadList() {
+	void loadEmployees() {
+		ifstream EmployeeFile(employeesFileName);
 
+		if (!EmployeeFile) {
+			if (!EmployeeFile) {
+				cout << "ERROR! An error occured when loading list.\n";
+				//No - Chris
+				//cout << "Employee file not found. Initializing with default employees.\n";
+				//employeeNames = { "Peter Griffin","Glenn Quagmire","Cleveland Brown","Joe Swanson" };
+				return;
+			}
+		}
+
+		// clears the existing list
+		employeeNames.clear();
+
+		// reads each line from file and adds to list
+		string employeeName;
+		while (getline(EmployeeFile, employeeName)) {
+			employeeNames.push_back(employeeName);
+		}
+
+		EmployeeFile.close();
+		cout << "Employee list loaded from EmployeeList.csv\n";
 	}
 
 };
+*/
 
-class Roster {
+
+
+class RosterManager {
 public:
+	string 
+		rosterName,
+		rosterFileName = rosterName + "-Roster.csv",
+		employeesFileName = rosterName + "-EmployeeList.csv";
+
 	struct {
-		string day[7] = { "Monday", "Tudesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday" };
+		string day[7] = { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday" };
 		
 		list<string> employeeList[7];
 	} roster;
+
+	list<string> employeeNames; //= { "Johnny","Joey","Jeremy","Jamie","Jackie","Jeffrey" };
+
+	void displayEmployeeList() {
+		for (string employeeName : employeeNames) {
+			cout << employeeName << "\n";
+		}
+	}
+
+	void addEmployee(string employeeName) {
+		/*
+		cout << "Enter the name of the employee to add";
+		getline(cin, employeeName);
+		*/
+		employeeNames.push_back(employeeName);
+	}
+
+	//Ignore for now
+	void editEmployee(string employeeName) {
+
+	}
+
+
+
+	void removeEmployee(string employeeName) {
+		// finds the employee in the list
+		auto it = find(employeeNames.begin(), employeeNames.end(), employeeName);
+
+		// removes employee if found in list
+		if (it != employeeNames.end()) {
+			employeeNames.erase(it);
+			cout << "Employee \"" << employeeName << "\" has been removed from the list.\n";
+		}
+		else {
+			cout << "Employee \"" << employeeName << "\" not found in the list.\n";
+		}
+	}
+
+	void saveEmployees() {
+		// Save employee list to CSV file
+		ofstream EmployeeFile(employeesFileName);
+
+		if (!EmployeeFile) {
+			cout << "Error opening file for saving.\n";
+			return;
+		}
+
+		// writes employee name to file from employee list
+		for (const string& employeeName : employeeNames) {
+			EmployeeFile << employeeName << "\n";
+		}
+
+		EmployeeFile.close();
+		cout << "Employee list has been saved to EmployeeList.csv\n";
+	}
+
+	void loadEmployees() {
+		ifstream EmployeeFile(employeesFileName);
+
+		if (!EmployeeFile) {
+			if (!EmployeeFile) {
+				cout << "ERROR! An error occured when loading list.\n";
+				//No - Chris
+				//cout << "Employee file not found. Initializing with default employees.\n";
+				//employeeNames = { "Peter Griffin","Glenn Quagmire","Cleveland Brown","Joe Swanson" };
+				return;
+			}
+		}
+
+		// clears the existing list
+		employeeNames.clear();
+
+		// reads each line from file and adds to list
+		string employeeName;
+		while (getline(EmployeeFile, employeeName)) {
+			employeeNames.push_back(employeeName);
+		}
+
+		EmployeeFile.close();
+		cout << "Employee list loaded from EmployeeList.csv\n";
+	}
 
 	void displayRoster() {
 		for (int i = 0; i < 7; i++) {
@@ -85,12 +310,12 @@ public:
 	}
 
 	void loadRoster() {
-		ifstream RosterFile("test_Roster.csv");
+		ifstream RosterFile(rosterFileName);
 
 		string input;
 
 		if (!RosterFile) {
-			cout << "Inventory file cannot be found.\n";
+			cout << "Roster file cannot be found.\n";
 			return;
 		}
 		for (int i = 0; i < 7; i++) {
@@ -101,11 +326,11 @@ public:
 		}
 
 		RosterFile.close();
-		cout << "Inventory has been loaded from file\n";
+		cout << "Roster has been loaded from \"" << rosterFileName << "\"\n";
 	}
 
 	void saveRoster() {
-		ofstream RosterFile("test_Roster.csv");
+		ofstream RosterFile(rosterFileName);
 
 		// Error prevention
 		if (!RosterFile) {
@@ -122,14 +347,19 @@ public:
 		}
 
 		RosterFile.close();
-		cout << "Roster has been saved to \"" << "test_Roster.csv" << "\".";
+		cout << "Roster has been saved to \"" << rosterFileName << "\".";
 	}
-};
 
-class Inventory {
+	void rosterMenu() {
+
+	}
+};//End of RosterManager
+
+class InventoryManager {
 public:
 	string 
-		inventoryName = "UNINITIALIZED";
+		inventoryName = "UNINITIALIZED",
+		inventoryFileExtension = "_Inventory.csv";
 
 	struct Item{
 		string
@@ -178,11 +408,8 @@ public:
 	}
 
 	// Saves the inventory to a file to later be loaded
-	/*
-	-Add Log functionality
-	*/
 	void saveInventory() {
-		ofstream InventoryFile(inventoryName + "_Inventory.csv");
+		ofstream InventoryFile(inventoryName + inventoryFileExtension);
 
 		// Error prevention
 		if (!InventoryFile) {
@@ -195,17 +422,16 @@ public:
 			InventoryFile << item.name << "," << item.quantity << "," << item.price << "\n";
 		}
 		InventoryFile.close();
-		cout << "Inventory has been saved to \"" + inventoryName + "_Inventory.csv\"\n";
+		list.clear(); // clears the current inventory
+		cout << "Inventory has been saved to \"" + inventoryName + inventoryFileExtension << "\"\n";
 	}
 
 	void loadInventory() {
-		ifstream InventoryFile(inventoryName + "_Inventory.csv");
+		ifstream InventoryFile(inventoryName + inventoryFileExtension);
 		if (!InventoryFile) {
 			cout << "Inventory file cannot be found.\n";
 			return;
 		}
-
-		list.clear(); // clears the current inventory
 
 		string name;
 		int quantity, price;
@@ -245,31 +471,19 @@ public:
 
 		cout << "Input quantity:\n";
 		do {
-			if (cin >> newQuantity) {
-				if (newQuantity < 0) {
-					cout << "Quantity has to be positive.\n";
-					cin.clear();
-					cin.ignore(numeric_limits<streamsize>::max(), '\n');
-				}
-			} else {
-				cout << "Invalid input. Please enter a positive integer.\n";
-				cin.clear();
-				cin.ignore(numeric_limits<streamsize>::max(), '\n');
+			cin >> newQuantity;
+			if (newQuantity < 0) {
+				cout << "Quantity has to be positive.\n";
+				//return;
 			}
 		} while (newQuantity < 0);
 
 		cout << "Input price:\n$";
 		do {
-			if (cin >> newPrice) {
-				if (newPrice < 0) {
-					cout << "Price has to be positive.\n";
-					cin.clear();
-					cin.ignore(numeric_limits<streamsize>::max(), '\n');
-				}
-			} else {
-				cout << "Invalid input. Please enter a non-negative integer.\n";
-				cin.clear();
-				cin.ignore(numeric_limits<streamsize>::max(), '\n');
+			cin >> newPrice;
+			if (newPrice < 0) {
+				cout << "Price has to be positive.\n";
+				//return;
 			}
 		} while (newPrice < 0);
 
@@ -292,6 +506,7 @@ public:
 	}
 
 	//Testing stuff
+	/*
 	void itemFuckery() {
 		Item* ptr = &list[0];
 		//vector<Item>::iterator it = list.begin();
@@ -307,11 +522,9 @@ public:
 		displayInventory();
 
 	}
+	*/
 
 	void editItem() {
-		/*TO-DO
-		* Add log functionality
-		*/
 		string desiredItem,
 			input,
 			newName;
@@ -337,15 +550,13 @@ public:
 		do {
 			cout << "Editing: " << (*selectedItem).name << "\nQuantity: " << (*selectedItem).quantity << "\nPrice: $" << (*selectedItem).price << endl;
 			cout << " 1:Change Name | 2:Add Quantity | 3:Remove Quantity | 4:Change Price | 0:Exit\n";
-
-				try {
-					getline(cin, input);
-					menuOption = stoi(input);
-				}
-				catch (...) {
-					cout << " ya fucked up m8\n";
-				}
-				switch (menuOption) {
+			
+			while (!(cin >> menuOption)) {
+				cin.clear();
+				cin.ignore();
+				cout << "Entered non integer input\n";
+			}//entering non int input creates infinite loop
+			switch (menuOption) {
 			case 0:// Exit menu
 				break;
 
@@ -430,6 +641,21 @@ public:
 					else cout << "price must be non -negative keeping orginal value\n";
 				}
 				catch (...) {
+					system("cls");
+					cout << "Invalid input keeping original value\n";
+				}
+				break;
+
+			default:
+				cout << "Invalid input\n";
+			}
+		} while (menuOption != 0);
+	}
+
+	void removeItem() {
+		string desiredItem,
+			input;
+		Item* selectedItem;
 		int index;//For remove from vector jank
 
 		cout << "Chose an item to remove\n";
@@ -465,50 +691,110 @@ public:
 		return false;
 	}
 
-	void menu() {
+	void inventoryMenu() {
 		int menuOption;
 
 		//Display inventory and menu options
-		cout << "Editing inventory: " << inventoryName << "\n\n";
+		cout << "Managing inventory: " << inventoryName << "\n\n";
 		displayInventory();
 		cout << " 1:New item | 2:Edit item | 3:Remove item | 0:Exit\n";
 
 		//Menu Inputs
 		do {
-			cout << "Please enter your choice (0-3): ";
-			if (cin >> menuOption) {
-				switch (menuOption) {
+			while (!(cin >> menuOption)) {
+				cin.clear();
+				cin.ignore();
+				cout << "Entered non integer input\n";
+			}
+			switch (menuOption) {
 			case 0:// Exit menu
 				break;
 			case 1:// Add inventory item
 				addItem();
 				system("cls");
-				return menu();
+				return inventoryMenu();
 			case 2:// Edit inventory item
 				if (!emptyCheck()) {
 					editItem();
 					system("cls");
-					return menu();
+					return inventoryMenu();
 				}
 				break;
 			case 3:// Remove inventory item
 				if (!emptyCheck()) {
 					removeItem();
 					system("cls");
-					return menu();
+					return inventoryMenu();
 				}
 				break;
 			default:
-				cout << "Invalid input. Please enter a number between 0 and 3.\n";
+				cout << "Invalid input\n";
 			}
-		} else {
-			// Clear the error flag and ignore invalid input
-			cin.clear();
-			cin.ignore(numeric_limits<streamsize>::max(), '\n');
-			cout << "Invalid input. Please enter a number between 0 and 3.\n";
-		}
 		} while (menuOption != 0);
 	}
+
+	void buyItem() {
+		string 
+			desiredItem,
+			input;
+		Item* selectedItem = nullptr;
+		int
+			newQuantity,
+			menuOption;
+
+		// Check if inventory is empty
+		if (emptyCheck()) {
+			return;
+		}
+
+		cout << "What item do you wish to purchase? \n";
+		getline(cin, desiredItem);
+		
+		if (findItem(selectedItem, desiredItem)) {
+			cout << "Purchasing " << selectedItem->name << "\nQuantity: " << selectedItem->quantity << "\nPrice: $" << selectedItem->price << endl;
+			cout << "How many " << selectedItem->name << " do you wish to purchase?\n";
+			getline(cin, input);
+			
+			try {
+				newQuantity = stoi(input);
+				if (newQuantity > 0) {
+					if (selectedItem->quantity - newQuantity < 0) {
+						cout << "Error: not enough items in stock for purchase\n";
+					}
+					else {
+						cout << "Price is $" << selectedItem->price * newQuantity << ". Purchase? (y/n)\n";
+						getline(cin, input);
+						
+						if (input == "y" || input == "Y") {
+							cout << "Purchase successful\n";
+							selectedItem->quantity -= newQuantity;
+							
+							// Log the purchase
+							log("Purchased " + to_string(newQuantity) + " of \"" + selectedItem->name + "\" for $" + to_string(selectedItem->price * newQuantity));
+						}
+						else if (input == "n" || input == "N") {
+							cout << "Purchase cancelled\n";
+						}
+						else {
+							cout << "Invalid input\n";
+						}
+					}
+				}
+				else {
+					cout << "Invalid quantity. Must be greater than 0.\n";
+				}
+			}
+			catch (...) {
+				cout << "Invalid input. Please enter a valid number.\n";
+			}
+		}
+	}
+		
+	
+
+
+		
+
 
 
 };//Class Inventory end
@@ -518,27 +804,131 @@ void timestamp() {
 
 }
 
-void runInventory(Inventory inv);
-void fucker(Roster &roster);
+void runInventory(InventoryManager& inv);
+void runRoster(RosterManager &roster);
+void testRunRoster(RosterManager& roster);
+bool adminLogin(LoginManager);
+//void runEmployee(EmployeeManager& employee);
+//void rosterMenu(RosterManager& roster, EmployeeManager& employees);
 
 int main()
 {
-	Inventory test;
+	InventoryManager test;
 	test.inventoryName = "test inventory";
+	RosterManager testRoster;
+	LoginManager testLogin;
 
-	Roster testRoster;
+	InventoryManager inv;
+	RosterManager ros;
 
+	string store;
+	int menuOption;
+	bool loop;
 
-	//timestamp();
-	runInventory(test);
-	//testRoster.loadRoster();
-	//testRoster.displayRoster();
-	//testRoster.saveRoster();
-	//fucker(testRoster);
-	//testRoster.displayRoster();
+	test.loadInventory();
+	test.displayInventory();
+	test.buyItem();
+	//runInventory(test);
+	/*
+	if (!adminLogin(testLogin)) {
+		return 0;
+	}
+	cout << "Choose a store to manage.\n1.Auckland\n2.Wellington\n3.Christchurch\n";
+
+	do {
+		loop = false;
+		while (!(cin >> menuOption)) {
+			cin.clear();
+			cin.ignore();
+			cout << "Entered non integer input\n";
+		}
+		switch (menuOption) {
+		case 0:
+			break;
+		case 1:
+			store = "Auckland";
+			break;
+		case 2:
+			store = "Wellington";
+			break;
+		case 3:
+			store = "Christchurch";
+			break;
+		default:
+			cout << "Invalid input";
+			loop = true;
+		}
+	} while (loop);
+	inv.inventoryName = store;
+	ros.rosterName = store;
+	system("cls");
+
+	cout << "Managing store: \"" << store << "\"\n"
+		<< "1.Manage Inventory\n2.Manage Roster\n3.Manage Employees\n0.Exit\n";
+
+	do {
+		while (!(cin >> menuOption)) {
+			cin.clear();
+			cin.ignore();
+			cout << "Entered non integer input\n";
+		}
+		switch (menuOption) {
+		case 0:
+			break;
+		case 1://Manage Inventory
+			system("cls");
+			runInventory(inv);
+			break;
+		case 2://Manage Roster
+			ros.rosterMenu();
+			break;
+		case 3://Manage Employees
+			cout << "Manage Employees non-functional.\n";
+			break;
+		default:
+			cout << "Invalid input";
+		}
+	} while (menuOption != 0);
+	*/
+	
 }
 
-void fucker(Roster &roster) {
+bool adminLogin(LoginManager testLogin) {
+	string
+		usernameInput,
+		passwordInput;
+
+	while (testLogin.noAdmins()) { 
+		testLogin.createAdmin(); 
+		system("cls");
+	}
+	for (int i = 3; i > 0; i--) {
+		cout << "Input Username: ";
+		getline(cin, usernameInput);
+		cout << "Input Password: ";
+		getline(cin, passwordInput);
+		if (!testLogin.login(usernameInput, passwordInput)) {
+			cout << "Invalid Username or Password.\n"<< i - 1 << " login attempts left.\n\n";
+		}
+		else {
+			cout << "Login Success!\n";
+			return true;
+		}
+		
+	}
+	cout << "To many login attempts exiting program.\n";
+	return false;
+}
+
+void testRunRoster(RosterManager& roster) {
+	roster.loadEmployees();
+	roster.loadRoster();
+	roster.rosterMenu();
+	roster.saveEmployees();
+	roster.saveRoster();
+}
+
+void runRoster(RosterManager& roster) {
 	string name;
 	int day;
 
@@ -550,8 +940,59 @@ void fucker(Roster &roster) {
 	roster.removeFromRoster(name, day);
 }
 
-void runInventory(Inventory inv) {
+void runInventory(InventoryManager& inv) {
 	inv.loadInventory();
-	inv.menu();
-	inv.saveInventory();
+	inv.inventoryMenu();
+	inv.saveInventory();//saves to UNINITIALIZED_Inventory.csv
 }
+
+/*
+void rosterMenu(RosterManager& roster, EmployeeManager& employees) {
+	int
+		menuOption,
+		dayInput;
+	string employeeInput;
+
+	roster.loadRoster();
+	employees.loadEmployees();
+	cout << "1: Manage Roster | 2: Manage Employees | 0: Exit\n";
+	do {
+		cin >> menuOption;
+		switch (menuOption) {
+		case 0://Exit
+			break;
+		case 1://Manage roster
+			system("cls");
+			roster.displayRoster();
+			cout << "1: Add to day | 2: Remove from day | 0: Exit\n";
+			do {
+				cin >> menuOption;
+				switch (menuOption) {
+				case 0:
+					break;
+				case 1://Add to day
+					roster.addToRoster(employeeInput,dayInput);
+					break;
+				case 2:
+					break;
+				default:
+					cout << "Invalid input";
+				}
+			}while (menuOption != 0);
+			break;
+		case 2:
+			break;
+		default:
+			cout << "Invalid input.\n";
+		}
+	} while (menuOption != 0);
+}
+*/
+
+/*
+void runEmployee(EmployeeManager& employee) {
+	employee.loadEmployees();
+	employee.displayList();
+	//employee.saveList();
+}
+*/
