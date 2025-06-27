@@ -1,7 +1,11 @@
-Added: 12 of "TEST ITEM" with price: $1345
-Added: 12 of "TEST ITEM" with price: $1356
-Added: 123 of "TEST ITEM 2" with price: $5134
-Added: 12 of "TEST ITEM" with price: $1245
-Added: 123 of "TEST ITEM 2" with price: $156
-Added: 12 of "TEST ITEM" with price: $1235
-Added: 123 of "TEST ITEM 2" with price: $145
+Added: 3 of "3" with price: $2500
+Changed name of "3" to "TEST ITEM 3"
+Set price of "TEST ITEM" from: $1235.000000 to: $12
+Set price of "TEST ITEM" from: $12.000000 to: $12.000000
+Set price of "TEST ITEM" from: $12.000000 to: $12.000000
+Set price of "TEST ITEM" from: $12.000000 to: $12.350000
+Added: 13 of "ROUNDING VALUE TEST" with price: $0.500000
+Added: 13 of "ROUNDING TEST 2" with price: $14.550000
+Added: 14 of "ROUNDING TEST 3" with price: $12.990000
+Deleted item "ROUNDING VALUE TEST". Had quantity: 13 and price: $0.500000
+Added: 15 of "NAME" with price: $0.500000

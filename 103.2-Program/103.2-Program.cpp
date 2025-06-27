@@ -18,6 +18,7 @@ using namespace std;
 class LoginManager {
 public:
 	string
+		user,
 		adminFile = "adminFile.csv";
 
 	bool noAdmins()
@@ -91,6 +92,35 @@ public:
 			}
 		} while (true);
 
+	}
+
+	bool adminLogin() {
+		string
+			usernameInput,
+			passwordInput;
+
+		while (noAdmins()) {
+			createAdmin();
+			system("cls");
+		}
+		for (int i = 3; i > 0; i--) {
+			cout << "Input Username: ";
+			getline(cin, usernameInput);
+			cout << "Input Password: ";
+			getline(cin, passwordInput);
+			if (!login(usernameInput, passwordInput)) {
+				cout << "Invalid Username or Password.\n" << i - 1 << " login attempts left.\n\n";
+			}
+			else {
+				system("cls");
+				cout << "Login Success!\n";
+				user = usernameInput;
+				return true;
+			}
+
+		}
+		cout << "To many login attempts exiting program.\n";
+		return false;
 	}
 };
 
@@ -219,8 +249,6 @@ public:
 	void editEmployee(string employeeName) {
 
 	}
-
-
 
 	void removeEmployee(string employeeName) {
 		// finds the employee in the list
@@ -365,7 +393,8 @@ public:
 		string
 			name;
 		int
-			quantity,
+			quantity;
+		double
 			price;
 	};
 
@@ -434,7 +463,8 @@ public:
 		}
 
 		string name;
-		int quantity, price;
+		int quantity;
+		double price;
 		char comma;
 
 		while (InventoryFile >> ws && getline(InventoryFile, name, ',')) {
@@ -451,8 +481,9 @@ public:
 	void addItem(){
 		string
 			newName;
-		int 
-			newQuantity,
+		int
+			newQuantity;
+		double
 			newPrice;
 
 
@@ -471,20 +502,32 @@ public:
 
 		cout << "Input quantity:\n";
 		do {
-			cin >> newQuantity;
+			while (!(cin >> newQuantity)){
+				cin.clear();
+				cin.ignore();
+				cout << "Invalid input\n";
+			}
 			if (newQuantity < 0) {
 				cout << "Quantity has to be positive.\n";
 				//return;
 			}
 		} while (newQuantity < 0);
 
+		cin.ignore(1000, '\n');//If user enters a decimal point when inputing newQuantity this clears the input from after the decimal point
+
 		cout << "Input price:\n$";
 		do {
-			cin >> newPrice;
+			while (!(cin >> newPrice)) {
+			cin.clear();
+			cin.ignore();
+			cout << "Invalid input\n";
+		}
+			
 			if (newPrice < 0) {
 				cout << "Price has to be positive.\n";
 				//return;
 			}
+			newPrice = roundNumber(newPrice);
 		} while (newPrice < 0);
 
 		list.push_back({ newName, newQuantity, newPrice });
@@ -492,6 +535,7 @@ public:
 		//Logging the change to the file
 		log("Added: " + to_string(newQuantity) + " of \"" + newName + "\" with price: $" + to_string(newPrice));//Removed the log message variable bc it's not needed
 	}
+
 
 	bool findItem(Item *&ptr, string itemDesired) {
 		transform(itemDesired.begin(), itemDesired.end(), itemDesired.begin(), ::toupper);
@@ -523,6 +567,13 @@ public:
 
 	}
 	*/
+	//rounds input number to 2 decimal places
+	double roundNumber(double value) {
+		double scale = 0.01;
+
+		value = (int)(value / scale) * scale;
+		return value;
+	}
 
 	void editItem() {
 		string desiredItem,
@@ -531,8 +582,9 @@ public:
 		Item* selectedItem = &list[0];
 		int 
 			newQuantity,
-			newPrice,
 			menuOption;
+		double
+			newPrice;
 
 		//Chose an item from the list
 		cin.ignore();
@@ -549,19 +601,19 @@ public:
 		//Menu Inputs
 		do {
 			cout << "Editing: " << (*selectedItem).name << "\nQuantity: " << (*selectedItem).quantity << "\nPrice: $" << (*selectedItem).price << endl;
-			cout << " 1:Change Name | 2:Add Quantity | 3:Remove Quantity | 4:Change Price | 0:Exit\n";
+			cout << " 1:Change Name | 2:Add Quantity | 3:Remove Quantity | 4:Change Price | 0:Return\n";
 			
 			while (!(cin >> menuOption)) {
 				cin.clear();
 				cin.ignore();
-				cout << "Entered non integer input\n";
+				cout << "Invalid input\n";
 			}//entering non int input creates infinite loop
 			switch (menuOption) {
 			case 0:// Exit menu
 				break;
 
 			case 1: //edit name
-				cout << "Enter new name for \"" << (*selectedItem).name << "\" or leave empty to keep name";
+				cout << "Enter new name for \"" << (*selectedItem).name << "\" or leave empty to keep name\n";
 				//cout << "enter new name (leave empty to keep\"" << (*selectedItem).name << "\"):";
 				cin.ignore();
 				getline(cin, newName);
@@ -629,10 +681,11 @@ public:
 				cout << "enter new price (current: $" << (*selectedItem).price << "): ";
 				cin >> input;
 				try {
-					newPrice = stoi(input);
+					newPrice = stod(input);
 					system("cls");
 					if (newPrice >= 0) {
 
+						newPrice = roundNumber(newPrice);
 						//Log changes
 						log("Set price of \"" + (*selectedItem).name + "\" from: $" + to_string((*selectedItem).price) + " to: $" + to_string(newPrice));
 
@@ -733,8 +786,51 @@ public:
 		} while (menuOption != 0);
 	}
 
+	void buyItem() {
+		string
+			desiredItem,
+			input,
+			newName;
+		Item* selectedItem = &list[0];
+		int
+			newQuantity,
+			menuOption,
+			Purchase;
 
-};//Class Inventory end
+		cout << "what item do you wish to purchase? \n";
+		getline(cin, desiredItem);
+		if (findItem(selectedItem, desiredItem)) {
+			cout << "purchasing " << (*selectedItem).name << "\nQuantity:" << (*selectedItem).quantity << "\nPrice; $" << (*selectedItem).price << endl;
+			cout << "how many" << (*selectedItem).name << "do you wish to purchase?\n";
+			cin >> input;
+			newQuantity = stoi(input);
+			if (newQuantity > 0) {
+				if ((*selectedItem).quantity - newQuantity < 0) {
+					cout << "Error not enough items in stock for purchase\n";
+				}
+				else {
+					cout << "price is $" << (*selectedItem).price * (newQuantity) << "purchase(y/n)\n";
+					cin >> Purchase;
+					switch (Purchase) {
+					case 'Y':
+					case 'y':
+						cout << "purchase successful\n";
+						(*selectedItem).quantity -= newQuantity;
+					case 'N':
+					case 'n':
+						system("cls");
+						return buyItem();
+					default:
+						cout << "invalid input";
+						return buyItem();
+
+					}
+				}
+			}
+		}
+	}
+	
+};//Class InventoryManager end
 
 //testing stuff
 void timestamp() {
@@ -745,116 +841,110 @@ void runInventory(InventoryManager& inv);
 void runRoster(RosterManager &roster);
 void testRunRoster(RosterManager& roster);
 bool adminLogin(LoginManager);
+void runAdmin(InventoryManager&, RosterManager&);
 //void runEmployee(EmployeeManager& employee);
 //void rosterMenu(RosterManager& roster, EmployeeManager& employees);
 
+//Testing stuff
+InventoryManager test;
+//test.inventoryName = "test inventory";
+RosterManager testRoster;
+
+InventoryManager inv;
+RosterManager ros;
+
 int main()
 {
-	InventoryManager test;
 	test.inventoryName = "test inventory";
-	RosterManager testRoster;
-	LoginManager testLogin;
+	runAdmin(inv, ros);
+	
+	//purchase item from inventory stuff
+	//test.loadInventory();
+	//test.displayInventory();
+	//test.buyItem();
+}
 
-	InventoryManager inv;
-	RosterManager ros;
-
+void runAdmin(InventoryManager&inv, RosterManager&ros) {
+	LoginManager loginManager;
 	string store;
 	int menuOption;
-	bool loop;
+	//bool logedIn;
 
-
-	//runInventory(test);
-
-	if (!adminLogin(testLogin)) {
-		return 0;
+	if (!loginManager.adminLogin()) {
+		return;
 	}
-	cout << "Choose a store to manage.\n1.Auckland\n2.Wellington\n3.Christchurch\n";
 
 	do {
-		loop = false;
-		while (!(cin >> menuOption)) {
-			cin.clear();
-			cin.ignore();
-			cout << "Entered non integer input\n";
-		}
-		switch (menuOption) {
-		case 0:
-			break;
-		case 1:
-			store = "Auckland";
-			break;
-		case 2:
-			store = "Wellington";
-			break;
-		case 3:
-			store = "Christchurch";
-			break;
-		default:
-			cout << "Invalid input";
-			loop = true;
-		}
-	} while (loop);
-	inv.inventoryName = store;
-	ros.rosterName = store;
-	system("cls");
+		cout << "Logged in as: " << loginManager.user << "\n";
+		cout << "\nManage store:\n1.Auckland\n2.Wellington\n3.Christchurch\n"
+			"\nOther options:\n4.Create new admin login\n0.Logout\n";
 
-	cout << "Managing store: \"" << store << "\"\n"
-		<< "1.Manage Inventory\n2.Manage Roster\n3.Manage Employees\n0.Exit\n";
-	/*
-	* -Need to add looping
-	*/
-	do {
-		while (!(cin >> menuOption)) {
-			cin.clear();
-			cin.ignore();
-			cout << "Entered non integer input\n";
-		}
-		switch (menuOption) {
-		case 0:
-			break;
-		case 1://Manage Inventory
-			system("cls");
-			runInventory(inv);
-			break;
-		case 2://Manage Roster
-			ros.rosterMenu();
-			break;
-		case 3://Manage Employees
-			cout << "Manage Employees non-functional.\n";
-			break;
-		default:
-			cout << "Invalid input";
-		}
-	} while (menuOption != 0);
-	
-}
-
-bool adminLogin(LoginManager testLogin) {
-	string
-		usernameInput,
-		passwordInput;
-
-	while (testLogin.noAdmins()) { 
-		testLogin.createAdmin(); 
+		do {
+			while (!(cin >> menuOption)) {
+				cin.clear();
+				cin.ignore();
+				cout << "Entered non integer input\n";
+			}
+			switch (menuOption) {
+			case 0:
+				return;
+			case 1://Set store to Auckland
+				store = "Auckland";
+				break;
+			case 2://Set store to Wellington
+				store = "Wellington";
+				break;
+			case 3://Set store to Christchurch
+				store = "Christchurch";
+				break;
+			case 4://Create new Admin
+				cin.ignore();
+				loginManager.createAdmin();
+				break;
+			default:
+				cout << "Invalid input";
+			}
+		} while (!(menuOption > 0 && menuOption < 4));
+		inv.inventoryName = store;
+		ros.rosterName = store;
 		system("cls");
-	}
-	for (int i = 3; i > 0; i--) {
-		cout << "Input Username: ";
-		getline(cin, usernameInput);
-		cout << "Input Password: ";
-		getline(cin, passwordInput);
-		if (!testLogin.login(usernameInput, passwordInput)) {
-			cout << "Invalid Username or Password.\n"<< i - 1 << " login attempts left.\n\n";
-		}
-		else {
-			cout << "Login Success!\n";
-			return true;
-		}
-		
-	}
-	cout << "To many login attempts exiting program.\n";
-	return false;
+
+		cout << "\nManaging store: \"" << store << "\"\n\n"
+			<< "1.Manage Inventory\n2.Manage Roster\n3.Manage Employees\n\n0.Back\n";
+		do {
+			while (!(cin >> menuOption)) {
+				cin.clear();
+				cin.ignore();
+				cout << "Entered non integer input\n";
+			}
+			switch (menuOption) {
+			case 0://Exit
+				system("cls");
+				break;
+			case 1://Manage Inventory
+				system("cls");
+				inv.loadInventory();
+				inv.inventoryMenu();
+				system("cls");
+				inv.saveInventory();
+				//Throwing the menu display here because it is the easiest way to do what I wan't
+				cout << "\nManaging store: \"" << store << "\"\n\n"
+					<< "1.Manage Inventory\n2.Manage Roster\n3.Manage Employees\n\n0.Back\n";
+				break;
+			case 2://Manage Roster
+				ros.rosterMenu();
+				break;
+			case 3://Manage Employees
+				cout << "Manage Employees non-functional.\n";
+				break;
+			default:
+				cout << "Invalid input";
+			}
+		} while (menuOption != 0);
+	} while (true);
 }
+
+
 
 void testRunRoster(RosterManager& roster) {
 	roster.loadEmployees();
@@ -879,7 +969,7 @@ void runRoster(RosterManager& roster) {
 void runInventory(InventoryManager& inv) {
 	inv.loadInventory();
 	inv.inventoryMenu();
-	inv.saveInventory();//saves to UNINITIALIZED_Inventory.csv
+	inv.saveInventory();
 }
 
 /*

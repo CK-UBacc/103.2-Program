@@ -134,7 +134,7 @@
     <None Include="EmployeeList.csv" />
     <None Include="test inventory_Inventory.csv" />
     <None Include="test_Roster.csv" />
-    <None Include="UNINITIALIZED_Inventory.csv" />
+    <None Include="Wellington_Inventory.csv" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="test inventory_Log.txt" />

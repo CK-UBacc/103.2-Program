@@ -1,0 +1,2 @@
+Added: 3 of "TEST ITEM" with price: $5.000000
+Added: 5 of "TEST ITEM 2" with price: $15.990000
