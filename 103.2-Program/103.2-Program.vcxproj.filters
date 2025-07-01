@@ -20,12 +20,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="test inventory_Inventory.csv">
-      <Filter>Source Files</Filter>
-    </None>
-    <None Include="test_Roster.csv">
-      <Filter>Source Files</Filter>
-    </None>
     <None Include="EmployeeList.csv">
       <Filter>Source Files</Filter>
     </None>
@@ -35,11 +29,11 @@
     <None Include="Wellington_Inventory.csv">
       <Filter>Source Files</Filter>
     </None>
+    <None Include="Wellington-Roster.csv">
+      <Filter>Source Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="test inventory_Log.txt">
-      <Filter>Source Files</Filter>
-    </Text>
     <Text Include="Wellington_Log.txt">
       <Filter>Source Files</Filter>
     </Text>
