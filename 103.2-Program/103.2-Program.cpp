@@ -462,7 +462,7 @@ public:
 
 		if (!EmployeeFile) {
 			if (!EmployeeFile) {
-				cout << "ERROR! An error occured when loading list.\n";
+				cout << "ERROR! An error occured when loading \"" << rosterName + employeesFileName << "\".\n";
 				//No - Chris
 				//cout << "Employee file not found. Initializing with default employees.\n";
 				//employeeNames = { "Peter Griffin","Glenn Quagmire","Cleveland Brown","Joe Swanson" };
@@ -578,7 +578,7 @@ public:
 		string input;
 
 		if (!RosterFile) {
-			cout << "Roster file cannot be found.\n";
+			cout << "ERROR! An error occured when loading \"" << rosterName + rosterFileName << "\".\n";
 			return;
 		}
 		for (int i = 0; i < 7; i++) {
@@ -799,7 +799,7 @@ public:
 			cout << " |";
 			cout << setfill ('.') << setw(20) << left << i.name;
 			cout << "|";
-			cout << setfill(' ') << "$" << left << i.price;
+			cout << setfill(' ') << "$" << fixed << setprecision(2) << left << i.price;
 			
 			cout << endl;
 		}
@@ -836,7 +836,7 @@ public:
 	void loadInventory() {
 		ifstream InventoryFile(inventoryName + inventoryFileExtension);
 		if (!InventoryFile) {
-			cout << "Inventory file cannot be found.\n";
+			cout << "ERROR! An error occured when loading \"" << inventoryName + inventoryFileExtension << "\".\n";
 			return;
 		}
 		list.clear(); // clears the current inventory
@@ -1317,7 +1317,7 @@ int main()
 		case 2:
 			system("cls");
 			purchase(inv);
-			system("cls");
+			//system("cls");
 			return main();
 		default:
 			cout << "Invalid input.\n";
@@ -1358,8 +1358,10 @@ void purchase(InventoryManager& inv) {
 	inv.inventoryName = store;
 	inv.loadInventory();
 	system("cls");//Clear inventory load message as this is not relevant for the customer
+	if (inv.emptyCheck()) return; // Fix for crashing when inventory file doesn't exits. This was an after last minute fix so it's not ideal
 	inv.buyItem();
 	inv.saveInventory();
+	system("cls");
 }
 
 void runAdmin(InventoryManager&inv, RosterManager&ros) {
