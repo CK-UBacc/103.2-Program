@@ -9,3 +9,9 @@ Added: 13 of "ROUNDING TEST 2" with price: $14.550000
 Added: 14 of "ROUNDING TEST 3" with price: $12.990000
 Deleted item "ROUNDING VALUE TEST". Had quantity: 13 and price: $0.500000
 Added: 15 of "NAME" with price: $0.500000
+Added: 2 of "README" with price: $0.050000
+Added: 5 of "ITEM OF 5" with price: $5.000000
+Changed name of "README" to "README"
+Added: 1 of "README" (From: 2 to: 3)
+Set price of "README" from: $0.050000 to: $15.000000
+Deleted item "ITEM OF 5". Had quantity: 5 and price: $5.000000
